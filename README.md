@@ -29,4 +29,5 @@ Nada de estado compartilhado entre eventos.
 - Credenciais em `.env`, nunca versionadas.
 - Dados de terceiros (prefeituras, órgãos públicos, parceiros) ficam fora do versionamento;
   guarde o *script* que os obtém, não o dado.
+- Link do Vídeo Demo: https://www.loom.com/share/9b9ed994878c4a5b8217e3df14d53776
 - Sobre a comunidade: https://www.claudecommunity.com.br/
