@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "painel",
+      "runtimeExecutable": ".venv/bin/uvicorn",
+      "runtimeArgs": [
+        "fila_certa.main:app",
+        "--port",
+        "8000",
+        "--reload",
+        "--reload-dir",
+        "app/backend/src"
+      ],
+      "port": 8000
+    }
+  ]
+}

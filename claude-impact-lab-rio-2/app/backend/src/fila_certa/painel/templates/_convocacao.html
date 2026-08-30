@@ -1,0 +1,30 @@
+<section class="card" style="background:var(--green-fill);border-color:var(--green-line)">
+  <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">
+    <div class="cresce">
+      <p class="disp" style="margin:0 0 3px;font-size:14px;font-weight:600;color:var(--green-ink)">
+        Convocação #{{ convocacao.id }} registrada
+      </p>
+      <p style="margin:0;font-size:12px;color:var(--green-ink);line-height:1.5">
+        <span class="mono">{{ aluno }}</span> foi convocada para <strong>{{ convocacao.destino.nome }}</strong>.
+        Prazo para confirmar: <strong>{{ convocacao.prazo }}</strong>.
+      </p>
+    </div>
+  </div>
+
+  <p class="mono" style="margin:0 0 7px;font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--green-ink)">Trilha de tentativas</p>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    {% for d in cascata %}
+    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--green-line);border-radius:8px;padding:8px 11px">
+      <span class="mono" style="width:14px;font-size:10px;color:var(--ink-faint)">{{ loop.index }}</span>
+      <span style="width:150px;font-size:12px;font-weight:500">{{ d.rotulo }}</span>
+      <span class="mono cresce" style="font-size:10.5px;color:var(--ink-soft)">{{ d.quando }}</span>
+      <span class="pill {{ 'verde' if d.ao_vivo else 'ambar' }}">{{ 'enviado' if d.ao_vivo else 'pendente' }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p style="margin:11px 0 0;font-size:11px;color:var(--green-ink);line-height:1.5">
+    Só o push sai de fato nesta demonstração — WhatsApp, SMS e ligação exigem credencial de provedor.
+    O registro, que é o entregável, já está gravado: consulte em <a href="/api/v1/convocacoes" class="mono">/api/v1/convocacoes</a>.
+  </p>
+</section>

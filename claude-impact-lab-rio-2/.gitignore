@@ -7,6 +7,7 @@ dadoscreche/
 .venv/
 venv/
 __pycache__/
+*.egg-info/
 *.pyc
 
 # --- app (PWA) ---
@@ -14,6 +15,7 @@ node_modules/
 app/frontend/dist/
 app/frontend/.vite/
 app/data/*
+!app/backend/src/fila_certa/data/painel.json
 !app/data/.gitkeep
 
 # --- geral ---

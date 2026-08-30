@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Painel{% endblock %} — Inscrição Creche SME-Rio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/estilo.css">
+<script src="/static/htmx.min.js"></script>
+</head>
+{#
+  hx-boost transforma todo <a> e <form> em requisição AJAX: o servidor devolve a
+  página inteira, o htmx extrai apenas #tela e troca o conteúdo. Resultado: uma
+  SPA sem router no cliente — e cada rota continua sendo um deep-link válido,
+  que funciona com JavaScript desligado e com o botão voltar do navegador.
+#}
+<body hx-boost="true" hx-target="#tela" hx-select="#tela" hx-swap="innerHTML show:window:top">
+
+<header class="topo">
+  <a class="marca" href="/">
+    <span class="crest disp">RJ</span>
+    <span>
+      <span class="eyebrow mono">Secretaria Municipal de Educação · Inscrição Creche</span>
+      <span class="disp marca-nome">Fila Certa · Gestão</span>
+    </span>
+  </a>
+
+  <nav class="navegacao">
+    <a class="chip" href="/">Cidade</a>
+    <div class="menu">
+      <button class="chip" type="button" aria-haspopup="true">Coordenadorias ▾</button>
+      <div class="menu-lista">
+        {% for c in nav_cres %}
+        <a href="/cre/{{ c.cre }}">
+          <span>{{ c.cre }}ª CRE</span>
+          <span class="mono">{{ c.fila }} na fila · {{ c.vagas }} vagas</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </nav>
+
+  <span class="cresce"></span>
+  <span class="carregando htmx-indicator mono">carregando…</span>
+  <span class="mono" style="font-size:11px;color:var(--navy-pale)">Processo {{ meta.processo }} · {{ meta.ano }}</span>
+</header>
+
+<div id="tela">
+  <div class="trilha">
+    <a href="/">Cidade</a>
+    {% block trilha %}{% endblock %}
+    <span class="cresce"></span>
+    <h1 class="disp trilha-titulo">{% block cabecalho %}{% endblock %}</h1>
+  </div>
+  <main class="corpo">{% block conteudo %}{% endblock %}</main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Não encontrado{% endblock %}
+{% block conteudo %}
+<section class="card" style="text-align:center;padding:48px">
+  <p class="disp" style="margin:0 0 8px;font-size:18px;font-weight:600">Nada por aqui</p>
+  <p style="margin:0 0 18px;font-size:13px;color:var(--ink-soft)">
+    {% if cre %}A {{ cre }}ª CRE não tem foco com vaga ao alcance nesta extração.{% else %}Registro não encontrado.{% endif %}
+  </p>
+  <a class="btn" href="/">Voltar ao painel</a>
+</section>
+{% endblock %}

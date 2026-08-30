@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block titulo %}Realocar{% endblock %}
+{% block cabecalho %}Oferecer vaga a uma criança da fila{% endblock %}
+
+{% block trilha %}<span>›</span><a href="/cre/{{ origem.cre }}?foco={{ origem.cod }}">{{ origem.cre }}ª CRE</a><span>›</span><span class="atual">Realocar</span>{% endblock %}
+
+{% block conteudo %}
+<div style="display:flex;gap:16px;align-items:flex-start">
+
+  <section class="card" style="width:420px;flex-shrink:0;padding:0;overflow:hidden">
+    <div style="padding:15px 17px 12px;border-bottom:1px solid var(--paper)">
+      <h2 class="disp" style="margin:0 0 3px;font-size:14px;font-weight:600">Fila de espera</h2>
+      <p style="margin:0;font-size:11.5px;color:var(--ink-soft);line-height:1.45">
+        Ordem de classificação — não é reordenável. Selecione quem recebe a oferta.
+      </p>
+    </div>
+    <form id="oferta" method="post" action="/realocar/{{ origem.cod }}/{{ destino.cod }}">
+      {% for c in fila %}
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 17px;border-bottom:1px solid var(--paper);cursor:pointer">
+        <input type="radio" name="aluno" value="{{ c.aluno }}" {% if loop.first %}checked{% endif %}
+               onchange="document.getElementById('grp').value=this.dataset.g" data-g="{{ c.grupamento }}">
+        <span class="mono disp" style="width:20px;flex-shrink:0;font-size:13px;font-weight:600;color:var(--ink-faint)">{{ c.pos }}</span>
+        <span class="cresce" style="min-width:0">
+          <span class="mono" style="display:block;font-size:12px;font-weight:500">{{ c.aluno }}</span>
+          <span style="display:block;font-size:11px;color:var(--ink-soft)">{{ c.grupamento }} · espera {{ c.espera }}</span>
+        </span>
+        <span style="text-align:right;flex-shrink:0">
+          <span class="disp" style="display:block;font-size:14px;font-weight:600;color:var(--navy)">{{ c.pontos }}</span>
+          <span class="mono" style="display:block;font-size:9px;color:var(--ink-faint)">pontos</span>
+        </span>
+        <span class="pill {{ 'verde' if c.tag != 'Sem critério' else '' }}" style="flex-shrink:0;font-size:10px;{% if c.tag == 'Sem critério' %}background:var(--wash);color:var(--ink-soft){% endif %}">{{ c.tag }}</span>
+      </label>
+      {% endfor %}
+      <input type="hidden" name="grupamento" id="grp" value="{{ fila[0].grupamento }}">
+    </form>
+    <div style="padding:11px 17px;background:var(--wash);border-top:1px solid var(--paper)">
+      <p class="mono" style="margin:0;font-size:10px;color:var(--ink-soft);line-height:1.5">
+        Códigos anonimizados. A ordem segue a classificação publicada em Diário Oficial e é auditável.
+      </p>
+    </div>
+  </section>
+
+  <div class="cresce" style="display:flex;flex-direction:column;gap:12px;min-width:0">
+
+    <section class="card">
+      <h3 class="disp" style="margin:0 0 10px;font-size:13.5px;font-weight:600">Destino</h3>
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div class="cresce" style="min-width:0">
+          <p class="disp" style="margin:0 0 3px;font-size:15px;font-weight:600">{{ destino.nome }}</p>
+          <p style="margin:0 0 9px;font-size:11.5px;color:var(--ink-soft)">{{ destino.bairro }} · rede parceira · unidade {{ destino.cod }}</p>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            {% if dist %}<span class="pill" style="background:var(--wash);color:var(--ink)">{{ "%.2f"|format(dist) }} km da origem</span>{% endif %}
+            {% for g, n in destino.grupos.items() %}
+            <span class="pill verde">{{ g }}: {{ n }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <p class="mono" style="margin:0 0 2px;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint)">Meta contratada</p>
+          <p class="mono disp" style="margin:0;font-size:16px;font-weight:600;color:var(--navy)">{{ destino.meta }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="background:var(--amber-fill);border-color:var(--amber-line)">
+      <p class="disp" style="margin:0 0 4px;font-size:12.5px;font-weight:600;color:var(--amber-ink)">A oferta é adicional, não substitui</p>
+      <p style="margin:0;font-size:11.5px;color:#6B4A17;line-height:1.5">
+        Recusar esta vaga <strong>não</strong> retira a criança das outras filas. Só a aceitação encerra a inscrição.
+        <em>Muda a regra atual — depende de validação jurídica da SME.</em>
+      </p>
+    </section>
+
+    <section class="card">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px">
+        <h3 class="disp" style="margin:0;font-size:13.5px;font-weight:600">Como a família será avisada</h3>
+        <span class="mono" style="font-size:10px;color:var(--ink-soft)">cascata escalonada · 3 dias úteis</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:stretch">
+        {% for d in cascata %}
+        <div class="cresce" style="border:1px solid {{ 'var(--green-line)' if d.ao_vivo else 'var(--line)' }};background:{{ 'var(--green-fill)' if d.ao_vivo else 'var(--wash)' }};border-radius:9px;padding:9px 10px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span class="mono" style="font-size:9px;color:var(--ink-soft)">{{ loop.index }}</span>
+            <span style="font-size:11.5px;font-weight:600;color:{{ 'var(--green-ink)' if d.ao_vivo else 'var(--ink)' }}">{{ d.rotulo }}</span>
+          </div>
+          <p class="mono" style="margin:0;font-size:9.5px;color:var(--ink-soft)">{{ d.quando }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <p style="margin:11px 0 0;font-size:11px;color:var(--ink-soft);line-height:1.5">
+        Cada tentativa fica registrada com canal, horário e se houve resposta — é o que hoje não existe
+        e o que prova o cumprimento do prazo perante os órgãos que auditam a fila.
+      </p>
+    </section>
+
+    {% if convocacao %}
+      {% include "_convocacao.html" %}
+    {% else %}
+      <section class="card" style="background:var(--navy);border-color:var(--navy);display:flex;align-items:center;gap:16px">
+        <div class="cresce" style="min-width:0">
+          <p class="disp" style="margin:0 0 3px;font-size:13.5px;font-weight:600;color:#fff">Oferecer esta vaga</p>
+          <p style="margin:0;font-size:11.5px;color:var(--navy-pale);line-height:1.45">
+            A família tem 3 dias úteis para confirmar. Se recusar ou não responder, a vaga volta para a fila.
+          </p>
+        </div>
+        <button class="btn destaque" type="submit" form="oferta">Enviar convocação</button>
+      </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

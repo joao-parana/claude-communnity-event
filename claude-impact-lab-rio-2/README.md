@@ -35,9 +35,9 @@ aberta e independência de contas pessoais requisitos de projeto, não capricho.
 
 ```
 ├── CLAUDE.md                         # contexto operacional (também lido pelo Claude Code)
-├── app/                              # ⭐ o PWA Fila Certa (ver app/README.md)
-│   ├── backend/                      #   FastAPI — domain, services, adapters, repositories
-│   └── frontend/                     #   Vite + JS vanilla, service worker, as 6 telas
+├── app/                              # ⭐ Fila Certa (ver app/README.md)
+│   ├── backend/                      #   FastAPI: painel de gestão (pronto) + API JSON
+│   └── frontend/                     #   PWA do responsável (a fazer)
 ├── dadoscreche/                      # git clone https://github.com/CIT-SME-RJ/dadoscreche (não versionado)
 ├── docs/
 │   ├── desafio-inscricao-creche.md   # ⭐ o briefing organizado — comece aqui

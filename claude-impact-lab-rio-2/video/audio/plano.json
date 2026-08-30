@@ -1,0 +1,47 @@
+[
+ {
+  "cena": "01_cidade",
+  "fala": 10.62,
+  "total": 11.52
+ },
+ {
+  "cena": "02_cidade_bonsucesso",
+  "fala": 20.76,
+  "total": 21.66
+ },
+ {
+  "cena": "03_cre4",
+  "fala": 9.95,
+  "total": 10.85
+ },
+ {
+  "cena": "04_cre4_tiomario",
+  "fala": 17.32,
+  "total": 18.22
+ },
+ {
+  "cena": "05_cre4_vaga",
+  "fala": 14.8,
+  "total": 15.7
+ },
+ {
+  "cena": "06_realocar",
+  "fala": 15.57,
+  "total": 16.47
+ },
+ {
+  "cena": "07_realocar_aviso",
+  "fala": 14.22,
+  "total": 15.12
+ },
+ {
+  "cena": "08_convocada",
+  "fala": 14.54,
+  "total": 15.44
+ },
+ {
+  "cena": "09_trilha",
+  "fala": 16.7,
+  "total": 17.6
+ }
+]

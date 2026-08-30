@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block titulo %}{{ cre }}ª CRE{% endblock %}
+{% block cabecalho %}Fila e vagas no território{% endblock %}
+
+{% block trilha %}<span>›</span><span class="atual">{{ cre }}ª CRE</span>{% endblock %}
+
+{% block conteudo %}
+{% set lat0 = caixa.lat0 %}{% set lat1 = caixa.lat1 %}
+{% set lon0 = caixa.lon0 %}{% set lon1 = caixa.lon1 %}
+{% set dlat = (lat1 - lat0) or 0.001 %}{% set dlon = (lon1 - lon0) or 0.001 %}
+
+<div class="grade4" style="margin-bottom:16px">
+  <div class="card kpi vermelho">
+    <p class="rot mono">Crianças em espera</p>
+    <p class="num disp">{{ "{:,}".format(total_fila).replace(",", ".") }}</p>
+    <p class="sub">em {{ focos|length }} unidades desta CRE</p>
+  </div>
+  <div class="card kpi verde">
+    <p class="rot mono">Vagas ociosas a {{ meta.raio_km | int }} km</p>
+    <p class="num disp">{{ total_vagas }}</p>
+    <p class="sub">em {{ n_vagas_un }} creches parceiras</p>
+  </div>
+  <div class="card kpi ambar">
+    <p class="rot mono">Cobertura da fila</p>
+    <p class="num disp">{{ cobertura }}%</p>
+    <p class="sub">das crianças cabem nas vagas ao redor</p>
+  </div>
+  <div class="card kpi escuro">
+    <p class="rot mono">Focos críticos</p>
+    <p class="num disp">{{ focos|length }}</p>
+    <p class="sub">unidades com fila e vaga vizinha</p>
+  </div>
+</div>
+
+<div style="display:flex;gap:16px;align-items:flex-start">
+
+  <section class="card" style="width:600px;flex-shrink:0">
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <h2 class="disp" style="margin:0;font-size:14px;font-weight:600">Onde a fila e a vaga se encostam</h2>
+      <span class="mono" style="font-size:10px;color:var(--ink-soft)">raio {{ meta.raio_km | int }} km</span>
+    </div>
+    <p style="margin:4px 0 10px;font-size:11.5px;color:var(--ink-soft)">Clique num foco para ver as vagas ao redor.</p>
+
+    <div class="mapa" style="height:560px">
+      <svg viewBox="0 0 560 740" style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="xMidYMid meet">
+        {# vagas ociosas, por baixo #}
+        {% for cod, v in vagas_todas.items() %}
+        {% set vx = 20 + (v.lon - lon0) / dlon * 520 %}
+        {% set vy = 20 + (lat1 - v.lat) / dlat * 700 %}
+        {% set vr = 7 + (v.vagas ** 0.5) * 0.78 %}
+        <g><circle cx="{{ vx|round(1) }}" cy="{{ vy|round(1) }}" r="{{ vr|round(1) }}" fill="#DCEEE4" stroke="#2E8B65" stroke-width="1.6"></circle>
+        <text x="{{ vx|round(1) }}" y="{{ (vy + 3.4)|round(1) }}" text-anchor="middle" font-size="10" font-weight="600" fill="#1E5C43">{{ v.vagas }}</text></g>
+        {% endfor %}
+
+        {# focos de fila, por cima #}
+        {% for f in focos %}
+        {% set fx = 20 + (f.lon - lon0) / dlon * 520 %}
+        {% set fy = 20 + (lat1 - f.lat) / dlat * 700 %}
+        {% set fr = 9 + (f.fila ** 0.5) * 0.62 %}
+        {% set on = f.cod == sel.cod %}
+        <a class="foco" href="/cre/{{ cre }}?foco={{ f.cod }}">
+          {% if on %}<circle cx="{{ fx|round(1) }}" cy="{{ fy|round(1) }}" r="{{ (fr + 5)|round(1) }}" fill="none" stroke="#7A4308" stroke-width="3"></circle>{% endif %}
+          <circle class="ponto" cx="{{ fx|round(1) }}" cy="{{ fy|round(1) }}" r="{{ fr|round(1) }}" fill="{{ '#7A4308' if on else '#A83D3D' }}" fill-opacity="0.9"></circle>
+          <text x="{{ fx|round(1) }}" y="{{ (fy + 3.6)|round(1) }}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff" pointer-events="none">{{ f.fila }}</text>
+          <title>{{ f.nome }} — {{ f.fila }} na fila</title>
+        </a>
+        {% endfor %}
+      </svg>
+      <div class="legenda">
+        <span><i class="pt" style="background:#A83D3D"></i>crianças na fila</span>
+        <span><i class="pt" style="background:#DCEEE4;border:1.5px solid #2E8B65"></i>vagas ociosas (parceiras)</span>
+      </div>
+    </div>
+    <p class="mono rodape" style="margin-top:8px">
+      Mapa esquemático — posições relativas fiéis às coordenadas reais das unidades.
+    </p>
+  </section>
+
+  <div class="cresce" style="display:flex;flex-direction:column;gap:12px;min-width:0">
+
+    <section class="card">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">
+        <div class="cresce" style="min-width:0">
+          <p class="disp" style="margin:0 0 2px;font-size:15px;font-weight:600">{{ sel.nome }}</p>
+          <p class="mono" style="margin:0;font-size:10.5px;color:var(--ink-soft)">
+            {{ sel.bairro }} · unidade {{ sel.cod }}{% if sel.micro %} · microárea {{ sel.micro }}{% endif %}
+          </p>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <p class="disp" style="margin:0;font-size:24px;font-weight:700;color:var(--red-ink)">{{ sel.fila }}</p>
+          <p class="mono" style="margin:0;font-size:9.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em">na fila</p>
+        </div>
+      </div>
+      {% if vagas %}
+      <div style="display:flex;align-items:center;gap:9px;background:var(--green-fill);border:1px solid var(--green-line);border-radius:9px;padding:10px 13px">
+        <p style="margin:0;font-size:12.5px;color:var(--green-ink);line-height:1.45">
+          <strong>{{ vagas | sum(attribute='vagas') }} vagas ociosas</strong> em {{ vagas|length }} creches parceiras num raio de {{ meta.raio_km | int }} km.
+        </p>
+      </div>
+      {% else %}
+      <div style="background:var(--red-fill);border:1px solid var(--red-line);border-radius:9px;padding:10px 13px">
+        <p style="margin:0;font-size:12.5px;color:var(--red-ink)">Nenhuma vaga parceira ao alcance. Aqui realocar não resolve.</p>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+        <h3 class="disp" style="margin:0;font-size:13.5px;font-weight:600">Vagas alcançáveis</h3>
+        <span class="mono" style="font-size:10px;color:var(--ink-soft)">meta contratada · {{ meta.ref_vagas }}</span>
+      </div>
+      {% for v in vagas %}
+      <div style="display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid var(--paper)">
+        <div style="width:52px;flex-shrink:0;text-align:center">
+          <p class="mono disp" style="margin:0;font-size:14px;font-weight:600;color:var(--navy)">{{ "%.2f"|format(v.d) }}</p>
+          <p class="mono" style="margin:0;font-size:9px;color:var(--ink-faint)">km</p>
+        </div>
+        <div class="cresce" style="min-width:0">
+          <p style="margin:0 0 3px;font-size:12.5px;font-weight:600">{{ v.nome }}</p>
+          <p style="margin:0;font-size:11px;color:var(--ink-soft)">{{ v.bairro }} · {{ v.grupos.keys()|join(', ') }}</p>
+        </div>
+        <span class="pill verde" style="flex-shrink:0">{{ v.vagas }} vagas</span>
+        <a class="btn" href="/realocar/{{ sel.cod }}/{{ v.cod }}">Realocar &rarr;</a>
+      </div>
+      {% endfor %}
+    </section>
+
+    <section class="card">
+      <h3 class="disp" style="margin:0 0 10px;font-size:13.5px;font-weight:600">Maiores descompassos da CRE</h3>
+      {% for f in focos[:8] %}
+      <div class="linha">
+        <span class="mono" style="width:16px;flex-shrink:0;font-size:10.5px;color:var(--ink-faint)">{{ loop.index }}</span>
+        <a href="/cre/{{ cre }}?foco={{ f.cod }}" style="width:210px;flex-shrink:0;font-size:11.5px;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;{% if f.cod == sel.cod %}font-weight:700{% endif %}">{{ f.nome }}</a>
+        <div class="barra" style="height:16px">
+          <i class="f" style="width:{{ (100 * f.fila / max_fila)|round(1) }}%"></i>
+        </div>
+        <span class="mono" style="width:44px;flex-shrink:0;text-align:right;font-size:10.5px;color:var(--ink-soft)">{{ f.fila }}</span>
+      </div>
+      {% endfor %}
+    </section>
+  </div>
+</div>
+{% endblock %}
