@@ -34,27 +34,22 @@
     <div style="background:#153450; border-radius:13px; padding:20px 24px; display:flex; align-items:center; gap:30px; flex-shrink:0">
       <div style="flex-grow:1">
         <p class="disp" style="margin:0 0 6px; font-size:21px; font-weight:700; color:#fff; line-height:1.3">
-          2.477 crianças podem entrar numa creche esta semana, sem obra nem verba nova
+          15.326 crianças esperam vaga a menos de 3 km de uma creche com vaga aberta
         </p>
-        <p style="margin:0; font-size:13px; color:#9DB4C7; line-height:1.5; max-width:780px">
-          São 15.326 esperando a menos de 3 km de uma vaga aberta, mas só 3.340 vagas contratadas existem ao alcance
-          delas. Realocar resolve para uma parte — e mostra, no resto, exatamente onde falta oferta de verdade.
+        <p style="margin:0; font-size:13px; color:#9DB4C7; line-height:1.5; max-width:760px">
+          Não é escassez absoluta: é descompasso territorial. Em 140 bairros existe, ao mesmo tempo, fila de espera
+          e vaga ociosa contratada na vizinhança — sem obra, sem concurso, sem verba nova.
         </p>
       </div>
       <div style="display:flex; gap:14px; flex-shrink:0">
         <div style="text-align:right">
-          <p class="disp" style="margin:0; font-size:32px; font-weight:700; color:#fff">15.326</p>
-          <p class="mono" style="margin:0; font-size:10px; color:#9DB4C7; text-transform:uppercase; letter-spacing:.06em">crianças<br>na fila</p>
+          <p class="disp" style="margin:0; font-size:32px; font-weight:700; color:#fff">446</p>
+          <p class="mono" style="margin:0; font-size:10px; color:#9DB4C7; text-transform:uppercase; letter-spacing:.06em">unidades<br>em descompasso</p>
         </div>
         <div style="width:1px; background:#2C5878"></div>
         <div style="text-align:right">
-          <p class="disp" style="margin:0; font-size:32px; font-weight:700; color:#E38B2C">3.340</p>
-          <p class="mono" style="margin:0; font-size:10px; color:#9DB4C7; text-transform:uppercase; letter-spacing:.06em">vagas<br>ao alcance</p>
-        </div>
-        <div style="width:1px; background:#2C5878"></div>
-        <div style="text-align:right">
-          <p class="disp" style="margin:0; font-size:32px; font-weight:700; color:#7ED0A5">18%</p>
-          <p class="mono" style="margin:0; font-size:10px; color:#9DB4C7; text-transform:uppercase; letter-spacing:.06em">cobertura<br>da fila</p>
+          <p class="disp" style="margin:0; font-size:32px; font-weight:700; color:#E38B2C">12.079</p>
+          <p class="mono" style="margin:0; font-size:10px; color:#9DB4C7; text-transform:uppercase; letter-spacing:.06em">vagas<br>alcançáveis</p>
         </div>
       </div>
     </div>
@@ -138,12 +133,8 @@
           <p style="margin:0 0 8px; font-size:11px; color:#6B6459; line-height:1.6">
             <strong>Vagas:</strong> meta contratada menos matriculados, na rede parceira, maio/2025. A rede direta não declara capacidade — por isso não entra.
           </p>
-          <p style="margin:0 0 8px; font-size:11px; color:#6B6459; line-height:1.6">
-            <strong>Distância:</strong> entre coordenadas das unidades. A da família só vai até bairro e CEP.
-          </p>
           <p style="margin:0; font-size:11px; color:#6B6459; line-height:1.6">
-            <strong>Sem dupla contagem:</strong> uma creche alcançada por várias filas é contada uma vez só. As 2.477
-            realocações vêm de uma alocação em que cada vaga é usada uma única vez.
+            <strong>Distância:</strong> entre coordenadas das unidades. A da família só vai até bairro e CEP.
           </p>
         </div>
       </div>
@@ -166,20 +157,20 @@ class Component extends DCLogic {
     // fila = crianças únicas em 'Lista de espera' (processo 195/2025) por bairro da unidade;
     // vagas = soma de vagas ociosas da rede parceira (maio/2025) alcançáveis em até 3 km.
     const B = [
-      { nome:'Jacarepaguá',    cre:'7',  fila:2890, vagas:195 },
-      { nome:'Rio das Pedras', cre:'7',  fila:1053, vagas:78  },
-      { nome:'Freguesia',      cre:'7',  fila:883,  vagas:190 },
-      { nome:'Bonsucesso',     cre:'4',  fila:704,  vagas:383 },
-      { nome:'Curicica',       cre:'7',  fila:678,  vagas:84  },
-      { nome:'Taquara',        cre:'7',  fila:643,  vagas:105 },
-      { nome:'Cidade de Deus', cre:'7',  fila:634,  vagas:117 },
-      { nome:'Maré',           cre:'4',  fila:378,  vagas:97  },
-      { nome:'Anil',           cre:'7',  fila:353,  vagas:122 },
-      { nome:'Guaratiba',      cre:'10', fila:346,  vagas:158 },
-      { nome:'Gardênia Azul',  cre:'7',  fila:258,  vagas:106 },
-      { nome:'Bangu',          cre:'8',  fila:250,  vagas:19  },
-      { nome:'Vila Valqueire', cre:'7',  fila:239,  vagas:16  },
-      { nome:'Senador Camará', cre:'8',  fila:236,  vagas:19  }
+      { nome:'Bonsucesso',      cre:'4',  fila:704, vagas:383 },
+      { nome:'Curicica',        cre:'7',  fila:678, vagas:84  },
+      { nome:'Cidade de Deus',  cre:'7',  fila:594, vagas:68  },
+      { nome:'Taquara',         cre:'7',  fila:396, vagas:91  },
+      { nome:'Maré',            cre:'4',  fila:378, vagas:97  },
+      { nome:'Anil',            cre:'7',  fila:353, vagas:122 },
+      { nome:'Guaratiba',       cre:'10', fila:346, vagas:158 },
+      { nome:'Gardênia Azul',   cre:'7',  fila:258, vagas:106 },
+      { nome:'Bangu',           cre:'8',  fila:250, vagas:19  },
+      { nome:'Vila Valqueire',  cre:'7',  fila:239, vagas:16  },
+      { nome:'Senador Camará',  cre:'8',  fila:236, vagas:19  },
+      { nome:'Acari',           cre:'6',  fila:233, vagas:152 },
+      { nome:'Vila Kennedy',    cre:'8',  fila:230, vagas:19  },
+      { nome:'Manguinhos',      cre:'4',  fila:219, vagas:242 }
     ];
     const max = B[0].fila;
 

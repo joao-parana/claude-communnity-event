@@ -51,9 +51,9 @@
     </div>
 
     <div style="background:#fff; border:1px solid #D8D2C4; border-left:3px solid #E38B2C; border-radius:11px; padding:13px 15px">
-      <p class="mono" style="margin:0 0 5px; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:#6B6459">Cobertura da fila</p>
-      <p class="disp" style="margin:0 0 3px; font-size:26px; font-weight:700; color:#7A4308">{{ kpi.cobertura }}</p>
-      <p style="margin:0; font-size:11px; color:#6B6459">das crianças cabem nas vagas ao redor</p>
+      <p class="mono" style="margin:0 0 5px; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:#6B6459">Realocáveis agora</p>
+      <p class="disp" style="margin:0 0 3px; font-size:26px; font-weight:700; color:#7A4308">{{ kpi.vagas }}</p>
+      <p style="margin:0; font-size:11px; color:#6B6459">crianças que caberiam sem obra nem verba</p>
     </div>
 
     <div style="background:#153450; border:1px solid #153450; border-radius:11px; padding:13px 15px; color:#fff">
@@ -301,13 +301,11 @@ class Component extends DCLogic {
       realocar: () => this.setState({ sel })
     }));
 
-    // Uma creche alcançada por várias filas conta UMA vez — somar por foco infla o número.
+    const alcance = F.reduce((acc, _, i) => acc + vizDe(i).reduce((a, v) => a + v.n, 0), 0);
     const comVaga = F.filter((_, i) => vizDe(i).length > 0).length;
-    const vagasUnicas = new Map();
-    F.forEach((_, i) => vizDe(i).forEach((v) => vagasUnicas.set(v.nome, v.n)));
-    const totalVagas = [...vagasUnicas.values()].reduce((a, n) => a + n, 0);
-    const totalFila = F.reduce((a, f) => a + f.n, 0);
-    const cobertura = Math.round((totalVagas / totalFila) * 100);
+    const vagasUnicas = new Set();
+    F.forEach((_, i) => vizDe(i).forEach((v) => vagasUnicas.add(v.nome)));
+    const totalVagas = [...vagasUnicas].reduce((a, nome) => a + (V.find((v) => v.nome === nome)?.n ?? 0), 0);
 
     const maxFila = F[0].n;
     const ranking = F.slice(0, 6).map((f, i) => {
@@ -326,11 +324,10 @@ class Component extends DCLogic {
       raioTxt: raio.toFixed(1).replace('.0', '') + ' km',
       focos, vagas, ranking,
       kpi: {
-        fila: totalFila.toLocaleString('pt-BR'),
+        fila: F.reduce((a, f) => a + f.n, 0).toLocaleString('pt-BR'),
         unFila: F.length,
         vagas: totalVagas,
         unVagas: vagasUnicas.size,
-        cobertura: cobertura + '%',
         focos: comVaga
       },
       sel: {
