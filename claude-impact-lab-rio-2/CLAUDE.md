@@ -11,9 +11,14 @@ segunda edição do **Claude Impact Lab Rio**, patrocinado pela Anthropic e real
 **Prefeitura do Rio**, a **Secretaria Municipal de Educação (SME)** e a
 **Secretaria Municipal de Desenvolvimento Econômico (SMDE)**.
 
-O desafio é **um problema concreto da SME**. O briefing, os *datasets* e os critérios de avaliação
-**só são revelados às 8h30 do dia do evento** — este repositório existe para que, no momento em que o
-briefing sair, o time já tenha contexto de domínio, mapa de fontes de dados e ferramental pronto.
+**O briefing já aconteceu.** O desafio é o **acesso à creche para crianças de 0 a 3 anos e 11 meses**:
+planejamento de vagas, lógica de inscrição/classificação e — o gargalo mais agudo — o processo de
+**convocação**, hoje manual e que perde vagas por contato desatualizado.
+
+📄 **Leia primeiro: [`docs/desafio-inscricao-creche.md`](docs/desafio-inscricao-creche.md)** —
+briefing organizado da Gabriela (Gerente de Sistemas e Dados, Coordenadoria de Inovação e Tecnologia
+da SME), com os três eixos, os oito pontos de quebra, os dados fornecidos e os critérios de avaliação.
+A transcrição bruta está em [`docs/trancricao-gab.md`](docs/trancricao-gab.md).
 
 As melhores soluções são **doadas para a cidade**. Isso é um requisito de projeto, não um detalhe:
 o entregável precisa ser transferível (licença aberta, sem dependência de contas pessoais, documentado
@@ -23,12 +28,13 @@ em português).
 
 | Hora | Evento | Implicação técnica |
 | --- | --- | --- |
-| 08h00 | Check-in | — |
-| 08h30 | Briefing (desafio + dados + critérios) | Só aqui o escopo real aparece |
+| ~~08h30~~ | ~~Briefing~~ | ✅ feito — ver `docs/desafio-inscricao-creche.md` |
 | 09h00 | Início dos trabalhos | **7h30 líquidas de construção** |
-| 16h30 | **Deadline de entrega** | Hard stop |
-| 17h30 | Apresentação dos finalistas | Demo precisa rodar sem internet confiável |
-| 18h30 | Premiação | — |
+| **16h30** | **GitHub público — último commit válido** | **Hard stop. Commit das 16h31 não conta.** |
+| 16h30–17h30 | Jurados avaliam ~40 projetos | Entrega tem que ser entendível em minutos |
+| 17h30 | Anúncio dos **5 finalistas** e apresentações | Todo time deve estar preparado |
+| — | 6 min de pitch + 6 min de Q&A | Corte rígido aos 6:00 |
+| 18h30 | Premiação | Plano Max (US$ 200) por 1 mês para o time vencedor |
 
 **Consequência:** priorize *demo funcionando* sobre arquitetura ideal. Prefira caminho feliz robusto
 a cobertura de casos de borda. Deixe *seed data* mockado pronto para quando a API cair no dia.
@@ -114,30 +120,87 @@ e visita domiciliar não é comparável entre CREs. Tabela completa em `docs/map
 
 ---
 
-## 3. Programas da SME que podem ser o desafio
+## 3. O desafio: inscrição e acesso à creche
 
-Mapeados para reconhecer rapidamente o terreno quando o briefing sair:
+Resumo operacional. **O documento completo é [`docs/desafio-inscricao-creche.md`](docs/desafio-inscricao-creche.md)** —
+consulte-o antes de propor qualquer solução.
 
-| Programa | O que é | Ângulo de solução |
+### Escala do subdomínio
+
+| Indicador | Valor |
+| --- | --- |
+| Alunos na educação infantil, modalidade creche | **~89.000** |
+| Unidades de educação infantil (creche) | **~900** |
+| Inscrições/ano (CPFs únicos) | **~45.000** |
+| Registros na base (por opção) | **> 100.000** — cada CPF gera até 5 |
+| RMI (Registro Municipal Integrado) | **> 12 milhões** de registros |
+| Prazo para efetivar matrícula após convocação | **3 dias** (+1 excepcional) |
+
+Creche **não é ensino obrigatório** — daí existir classificação por pontuação em vez de alocação
+direta. A partir dos 4 anos a SME garante o bairro imediato.
+
+### Os três eixos (divisão da própria SME)
+
+1. **Planejamento de vagas** — começa em setembro para o ano seguinte, em três níveis: nível central
+   → 11 CREs → microáreas (clusters do IPP). Ancorado quase só em **demanda histórica**. Sintoma do
+   desalinhamento: vagas ociosas e filas gigantes **no mesmo território**.
+2. **Inscrição e classificação** — até 5 unidades por CPF, **sem nenhum critério territorial**.
+   A classificação é **por opção, não por criança**: uma criança existe em até 5 filas simultâneas.
+3. **Convocação** ⚠️ **— o gargalo mais agudo.** Manual, a cargo do diretor.
+
+### Os 8 pontos de quebra
+
+| # | Ponto de quebra | Efeito |
 | --- | --- | --- |
-| **Bora pra Escola / Busca Ativa** | Recondução de evadidos; 18 mil alunos em um ano; já existe um **"Preditor de Evasão Escolar"** interno que cruza variáveis de escola, turma, aluno e família | Cuidado: não reinvente o preditor — agregue interface, priorização de visitas, roteirização |
-| **Alimentação escolar** | 4 cardápios rotativos (semanas A/B/C/D) por CRE; Rio foi o 1º município do Brasil a proibir ultraprocessados; regido pela Lei 11.947/2009 e Resolução CD/FNDE 06/2020 | Logística, previsão de demanda, desperdício, conformidade nutricional, alergias/restrições |
-| **Matrícula Carioca** | Sistema de matrícula (`matricula.rio`) | Alocação de vagas, distância casa-escola, fila de creche |
-| **GET** — Ginásio Experimental Tecnológico | Ensino com foco tecnológico | Currículo, trilhas |
-| **EJA / ProJovem** | Fundamental + qualificação profissional, 18 a 29 anos | Ponte com empregabilidade (ver SMDE) |
-| **Vacina na Escola** | Vacinação nas unidades | Cobertura, integração com saúde |
-| **Trilhas Identitárias, Clubes Escolares, Núcleos de Arte** | Educação integral | Oferta vs. demanda territorial |
-| **Escola de Férias** | Programação de recesso | Capacidade, inscrição |
-| **Material RioEduca** | Plataforma de material didático | Conteúdo, IA generativa |
+| 1 | 5 unidades sem critério territorial | Opções inviáveis |
+| 2 | Classificação por opção, não por CPF | 45 mil inscrições → 100 mil registros |
+| 3 | Comprovação de vulnerabilidade **presencial** | Barreira para quem tem menos mobilidade |
+| 4 | **Contato não editável no sistema** | **Vagas perdidas por falta de comunicação** |
+| 5 | Convocação manual pelo diretor | Carga sobre quem já gere a unidade |
+| 6 | 3 dias por convocação, em cascata entre 5 filas | > 1 semana para preencher uma vaga |
+| 7 | Oferta única — recusou, sai de todas as filas | Reinscrição infla a demanda |
+| 8 | Planejamento só por demanda histórica | Ociosidade e fila coexistindo |
 
-### Sinais fortes para o desafio
+**A causa-raiz do nº 4, dita textualmente:** o sistema **não permite editar o contato nem tem campo
+de observação**. Quando a família aparece na creche com número novo, isso fica no *"caderninho"* do
+diretor. Classificação roda em janeiro; em fevereiro/março o telefone já mudou.
 
-O briefing virá da SME, mas há apoio da SMDE. Temas com maior probabilidade, dada a materialidade dos
-números e o discurso público da prefeitura: **alimentação escolar** (150 mi de refeições/ano, escala
-brutal), **evasão/frequência**, **alocação de vagas em creche**, e **transição escola→trabalho**
-(interseção SME × SMDE).
+### Restrições inegociáveis
 
----
+- **A ordem da fila de espera é auditada por órgãos reguladores.** Qualquer solução precisa
+  preservá-la e evidenciá-la.
+- **Publicação da classificação em Diário Oficial** é obrigatória.
+- **CPF da criança validado na Receita Federal**; uma inscrição ativa por CPF.
+
+### Dados fornecidos
+
+Quatro tabelas, **reais e anonimizadas**, 2021–2025, com dicionário: inscrições por opção (estados
+`confirmado`/`selecionado`/`cancelado`), respostas socioeconômicas (**o questionário mudou entre 2021
+e 2025** — cuidado ao comparar séries), matriculados (rede pública e parceiras), e unidades com
+**lat/lon**. Mais as **microáreas do IPP**.
+
+Anonimização — **removido**: idade real, endereço exato (só bairro e CEP), data de nascimento (só ano
+e mês). **Preservado**: sequência do processo, lógica da pontuação, relações entre as tabelas,
+dinâmica real de transição de estados.
+
+> São dados reais e **podem ter ruído**. Inspecione e limpe antes de concluir qualquer coisa.
+
+### Sobre a decisão de fazer app iOS/Android
+
+A SME **não pediu um aplicativo** — descreveu o problema. O app é decisão do time e precisa se
+sustentar sozinha. A análise completa está na **§8 de
+[`docs/desafio-inscricao-creche.md`](docs/desafio-inscricao-creche.md)**; em resumo:
+
+- **A favor:** push resolve o nº 4/5, e a resposta ativa ("não tenho mais interesse") ataca o nº 6
+  liberando a vaga sem consumir os 3 dias.
+- **Contra:** o público é o de maior vulnerabilidade social; instalar app é fricção real, e
+  **WhatsApp/SMS já estão no celular** — foram justamente os canais que falharam, por contato
+  desatualizado, não por ausência de canal. Além disso, o critério de maior peso é *"dá para colocar
+  amanhã na prefeitura"*, e app em loja não estreia amanhã.
+- **Recomendação:** separe o **canal** do **núcleo de valor** (detectar vaga → alcançar a família →
+  capturar resposta em horas → devolver a vaga ao fluxo). Construa o núcleo com o canal atrás de uma
+  interface. Se o app precisa ser o rosto da solução, **PWA** entrega push sem loja nem instalação e
+  integra ao `matricula.rio` existente.
 
 ## 4. SMDE — Secretaria Municipal de Desenvolvimento Econômico
 
@@ -186,12 +249,19 @@ curl -s --get "https://www.data.rio/api/search/v1/collections/dataset/items" \
   --data-urlencode "q=educação" --data-urlencode "limit=20"
 ```
 
-### Regra de ouro sobre dados no dia do evento
+### Hierarquia das fontes
 
-**Os dados oficiais do desafio vêm no briefing.** Tudo que está aqui é *contexto de enriquecimento*.
-Não construa o núcleo da solução sobre `data.rio` antes de ver o que a SME entregar — mas tenha o
-*join* geográfico (unidade → CRE → bairro) pronto, porque quase todo dataset da SME é chaveado por
-CRE e por código/denominação de unidade.
+1. **As quatro tabelas entregues pela SME** — fonte de verdade. Tudo que importa para a avaliação sai
+   daí.
+2. **Microáreas do IPP** (também entregues) — a unidade territorial que a SME de fato usa para
+   monitorar, mais fina que a CRE.
+3. **`data.rio`** — *enriquecimento*. Útil para o que a base do desafio não tem: geometria das CREs
+   para mapas, IDS por bairro/setor censitário (o mesmo critério socioeconômico que a prefeitura já
+   usa), e conferência cruzada da rede física.
+
+O *join* geográfico (unidade → microárea → CRE → bairro) é o eixo de quase toda análise territorial
+aqui — a base de unidades entregue já traz **lat/lon**, e `rio_crawler.py cres` dá os polígonos das
+CREs em GeoJSON para cruzar.
 
 ---
 
@@ -201,6 +271,8 @@ CRE e por código/denominação de unidade.
 .
 ├── CLAUDE.md                        # este arquivo
 ├── docs/
+│   ├── desafio-inscricao-creche.md  # ⭐ o briefing organizado — leia primeiro
+│   ├── trancricao-gab.md            # transcrição bruta do briefing
 │   ├── luma-event-post.md           # post e comunicados originais do evento
 │   └── mapa-sites-prefeitura.md     # mapa de sites, endpoints e datasets
 └── scripts/
@@ -242,11 +314,25 @@ commit, textos de UI. Identificadores de código em inglês (padrão usual de Py
 ### Regras de engenharia para hackathon
 1. **Cacheie toda chamada de rede em disco.** Wi-Fi de evento cai; demo não pode depender de rede.
 2. **Nada de credencial em código.** Chave da API em `.env`, `.env` no `.gitignore`.
-3. **Não vaze dados pessoais de alunos.** Se o dataset do evento contiver dados nominais ou de
-   menores, trate como sensível: não envie a serviços externos, não coloque em URL, anonimize antes
-   de qualquer prompt para a API. Isto vale mesmo que o organizador diga que "pode".
-4. **Um README que qualquer pessoa da prefeitura consiga seguir.** A solução vai ser doada.
+3. **Os dados são de crianças.** Já vêm anonimizados, mas a base preserva a dinâmica real do
+   processo. Não reidentifique, não coloque em URL, não envie a serviço externo além da API da
+   Anthropic, e minimize o que vai em prompt — mande agregados e amostras, não a base inteira.
+4. **Escreva o código para quem vai herdá-lo.** O critério "engenharia" é julgado por banca técnica
+   separada e mede explicitamente se **outra pessoa da secretaria consegue dar continuidade**.
+   README em português, sem dependência de conta pessoal, licença aberta.
 5. **Commit cedo, commit sempre** — mas só quando o usuário pedir.
+
+### Requisitos de entrega (valem nota)
+
+- **Repositório GitHub público.** Vale o **último commit até as 16h30**.
+- **O GitHub não é a entrega.** É preciso **uma aplicação publicada e acessível** ou um **vídeo de
+  até 5 minutos** com captura de tela. Jurados avaliam ~40 projetos em uma hora — se não der para
+  entender em minutos, não é avaliado.
+- **Todo time deve preparar o pitch**: 6 min + 6 min de Q&A, corte rígido. Os 5 finalistas só são
+  anunciados às 17h30.
+- **Créditos de API são finitos.** US$ 100 na conta `platform.claude.com` somem em um dia se usados
+  sem critério no modelo mais caro. Use `claude-haiku-4-5-20251001` ou `claude-sonnet-5` para volume
+  e tarefas simples; reserve `claude-opus-5` para onde raciocínio realmente importa.
 
 ### Sobre o ambiente local do usuário
 
@@ -256,15 +342,32 @@ alias não vale — chame `gsed` explicitamente.
 
 ---
 
-## 8. Perguntas a fazer no briefing
+## 8. Perguntas em aberto para mentores e para a SME
 
-Checklist para o usuário levar às 8h30. Respostas mudam a arquitetura:
+O briefing já passou, mas estas respostas mudam a arquitetura. Vale perguntar à Gabriela ou aos
+mentores durante o dia:
 
-- Qual o **formato e volume** dos dados entregues? (CSV, Excel, banco, API?)
-- Os dados contêm **informação pessoal identificável** de alunos? Qual o regime de tratamento?
-- A solução precisa **integrar com sistema existente** da SME? (ver lista de sistemas em
-  `docs/mapa-sites-prefeitura.md` — há ~23 sistemas legados)
-- Quem é o **usuário final**: gestor da SME, diretor de escola, CRE, professor, família?
-- Os critérios de avaliação pesam mais **impacto**, **viabilidade de adoção** ou **inovação técnica**?
-- Há **restrição de infraestrutura** do lado da prefeitura (nuvem permitida, on-premise, custo)?
-- Existe **solução atual** para o problema? Qual e por que não basta?
+- A convocação pode ser **automatizada de ponta a ponta**, ou o diretor precisa permanecer no fluxo
+  por exigência normativa?
+- Os **3 dias** são regra legal ou convenção operacional? Podem encurtar se a resposta for digital
+  e registrada?
+- Existe base legal para **recusar uma vaga sem sair de todas as filas**?
+- O **RMI** tem telefone atualizado (assistência social / saúde) que possa complementar o cadastro
+  educacional? — seria o caminho mais curto para o ponto de quebra nº 4.
+- Classificar **por CPF em vez de por opção** esbarra em alguma exigência dos órgãos reguladores?
+- Qual o volume real de **vagas perdidas por falha de contato**? Está mensurado na base entregue?
+
+---
+
+## 9. O aviso que mais importa
+
+> *"Todo mundo aqui poderia pegar tudo que a Gabi preparou, jogar no Claude e falar: se vira. Se
+> fizerem isso, todo mundo vem com uma solução igual — e para isso a Gabi podia ter feito dentro da
+> secretaria, porque eles usam Claude pra caramba lá. A razão de estarmos aqui é que esses modelos
+> ainda precisam da criatividade da galera. Pensem fora da caixa."*
+>
+> — organização, no briefing
+
+Vale para mim também. Quando eu propuser uma solução aqui, o piso é o óbvio; o valor está no que
+o time acrescenta em cima. O escopo foi declarado **deliberadamente aberto**: soluções "em torno do
+problema" são bem-vindas.
