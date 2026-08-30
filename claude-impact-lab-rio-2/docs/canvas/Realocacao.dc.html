@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin:0; font-family:'Inter',system-ui,sans-serif; background:#EDEAE1; color:#1C2229; }
+    a { color:#153450; } a:hover { color:#0D2436; }
+    .mono { font-family:'IBM Plex Mono','SFMono-Regular',monospace; }
+    .disp { font-family:'Archivo',system-ui,sans-serif; }
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; flex-direction:column; background:#EDEAE1; overflow:hidden">
+
+  <!-- topbar -->
+  <div style="display:flex; align-items:center; gap:14px; padding:0 24px; height:56px; background:#153450; color:#fff; flex-shrink:0">
+    <button style="background:#1E4463; border:1px solid #2C5878; border-radius:8px; padding:6px 11px; color:#fff; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>
+      Painel
+    </button>
+    <div style="display:flex; flex-direction:column; gap:1px">
+      <span class="mono" style="font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:#9DB4C7">Realocação assistida</span>
+      <span class="disp" style="font-size:15px; font-weight:700">Creche Municipal Otávio Henrique de Oliveira</span>
+    </div>
+    <div style="flex-grow:1"></div>
+    <span class="mono" style="font-size:11px; color:#9DB4C7">560 na fila · 7ª CRE</span>
+  </div>
+
+  <div style="display:flex; gap:16px; padding:18px 24px 20px; flex-grow:1; min-height:0">
+
+    <!-- ── coluna 1: fila priorizada ── -->
+    <div style="width:404px; flex-shrink:0; background:#fff; border:1px solid #D8D2C4; border-radius:13px; display:flex; flex-direction:column; overflow:hidden">
+      <div style="padding:15px 17px 12px; border-bottom:1px solid #EDEAE1">
+        <h2 class="disp" style="margin:0 0 3px; font-size:14px; font-weight:600">Fila de espera</h2>
+        <p style="margin:0; font-size:11.5px; color:#6B6459; line-height:1.45">Ordem de classificação — não é reordenável. Selecione quem vai receber a oferta.</p>
+      </div>
+
+      <div style="flex-grow:1; overflow:hidden">
+        <sc-for list="{{ fila }}" as="c" hint-placeholder-count="6">
+          <div onClick="{{ c.pick }}" style="display:flex; align-items:center; gap:12px; padding:12px 17px; border-bottom:1px solid #EDEAE1; cursor:pointer; background:{{ c.bg }}">
+            <span class="mono disp" style="width:26px; flex-shrink:0; font-size:13px; font-weight:600; color:{{ c.corPos }}">{{ c.pos }}</span>
+            <div style="flex-grow:1; min-width:0">
+              <p class="mono" style="margin:0 0 3px; font-size:12px; font-weight:500">{{ c.id }}</p>
+              <p style="margin:0; font-size:11px; color:#6B6459">{{ c.grupamento }} · {{ c.bairro }}</p>
+            </div>
+            <div style="text-align:right; flex-shrink:0">
+              <p class="disp" style="margin:0 0 2px; font-size:14px; font-weight:600; color:#153450">{{ c.pontos }}</p>
+              <p class="mono" style="margin:0; font-size:9px; color:#A9A192">pontos</p>
+            </div>
+            <span style="flex-shrink:0; display:inline-flex; align-items:center; gap:4px; background:{{ c.tagBg }}; color:{{ c.tagInk }}; font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px">{{ c.tag }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="padding:11px 17px; background:#F4F2EB; border-top:1px solid #EDEAE1">
+        <p class="mono" style="margin:0; font-size:10px; color:#6B6459; line-height:1.5">
+          Códigos anonimizados. A ordem segue a classificação publicada em Diário Oficial e é auditável.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── coluna 2: a criança escolhida ── -->
+    <div style="width:352px; flex-shrink:0; display:flex; flex-direction:column; gap:12px">
+
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:16px 17px">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px">
+          <div style="width:42px; height:42px; border-radius:50%; background:#153450; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0113 0"/></svg>
+          </div>
+          <div style="min-width:0">
+            <p class="mono" style="margin:0 0 2px; font-size:13px; font-weight:500">{{ sel.id }}</p>
+            <p style="margin:0; font-size:11px; color:#6B6459">{{ sel.grupamento }} · nascida em {{ sel.nasc }}</p>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px">
+          <div style="background:#F4F2EB; border-radius:8px; padding:9px 11px">
+            <p class="mono" style="margin:0 0 3px; font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#6B6459">Posição</p>
+            <p class="disp" style="margin:0; font-size:17px; font-weight:600">{{ sel.pos }}º</p>
+          </div>
+          <div style="background:#F4F2EB; border-radius:8px; padding:9px 11px">
+            <p class="mono" style="margin:0 0 3px; font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#6B6459">Pontuação</p>
+            <p class="disp" style="margin:0; font-size:17px; font-weight:600">{{ sel.pontos }}</p>
+          </div>
+          <div style="background:#F4F2EB; border-radius:8px; padding:9px 11px">
+            <p class="mono" style="margin:0 0 3px; font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#6B6459">Espera</p>
+            <p class="disp" style="margin:0; font-size:17px; font-weight:600">{{ sel.espera }}</p>
+          </div>
+          <div style="background:#F4F2EB; border-radius:8px; padding:9px 11px">
+            <p class="mono" style="margin:0 0 3px; font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#6B6459">Bairro</p>
+            <p class="disp" style="margin:0; font-size:13px; font-weight:600">{{ sel.bairro }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:15px 17px">
+        <h3 class="disp" style="margin:0 0 10px; font-size:13px; font-weight:600">As 5 escolhas da família</h3>
+        <sc-for list="{{ sel.escolhas }}" as="e" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #F4F2EB">
+            <span class="mono" style="width:14px; flex-shrink:0; font-size:10px; color:#A9A192">{{ e.i }}</span>
+            <div style="flex-grow:1; min-width:0">
+              <p style="margin:0 0 2px; font-size:11.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ e.nome }}</p>
+              <p class="mono" style="margin:0; font-size:10px; color:#6B6459">{{ e.dist }} de casa</p>
+            </div>
+            <span style="flex-shrink:0; background:{{ e.bg }}; color:{{ e.ink }}; font-size:10px; font-weight:600; padding:3px 9px; border-radius:20px">{{ e.status }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#FBE7CC; border:1px solid #EBC488; border-radius:13px; padding:14px 16px">
+        <div style="display:flex; gap:10px">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A4308" stroke-width="1.8" style="flex-shrink:0; margin-top:1px"><path d="M12 9v4"/><path d="M12 17v.01"/><path d="M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>
+          <div>
+            <p class="disp" style="margin:0 0 4px; font-size:12.5px; font-weight:600; color:#7A4308">A oferta é adicional, não substitui</p>
+            <p style="margin:0; font-size:11.5px; color:#6B4A17; line-height:1.5">
+              Recusar esta vaga <strong>não</strong> retira a criança das outras 4 filas. Só a aceitação encerra a inscrição.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── coluna 3: destino e envio ── -->
+    <div style="flex-grow:1; display:flex; flex-direction:column; gap:12px; min-width:0">
+
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:15px 17px; flex-grow:1; min-height:0; display:flex; flex-direction:column">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px">
+          <h3 class="disp" style="margin:0; font-size:13.5px; font-weight:600">Destinos compatíveis</h3>
+          <span class="mono" style="font-size:10px; color:#6B6459">grupamento {{ sel.grupamento }} · ≤ 3 km</span>
+        </div>
+        <p style="margin:0 0 12px; font-size:11.5px; color:#6B6459; line-height:1.45">Só aparecem unidades com vaga no grupamento certo para a idade da criança.</p>
+
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <sc-for list="{{ destinos }}" as="d" hint-placeholder-count="3">
+            <div onClick="{{ d.pick }}" style="border:{{ d.borda }}; background:{{ d.bg }}; border-radius:11px; padding:13px 15px; cursor:pointer">
+              <div style="display:flex; align-items:flex-start; gap:12px">
+                <div style="width:19px; height:19px; border-radius:50%; border:{{ d.radio }}; background:{{ d.radioBg }}; flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center">
+                  <span style="width:7px; height:7px; border-radius:50%; background:{{ d.dot }}; display:block"></span>
+                </div>
+                <div style="flex-grow:1; min-width:0">
+                  <p class="disp" style="margin:0 0 3px; font-size:13px; font-weight:600">{{ d.nome }}</p>
+                  <p style="margin:0 0 7px; font-size:11px; color:#6B6459">{{ d.bairro }} · rede parceira</p>
+                  <div style="display:flex; gap:7px; flex-wrap:wrap">
+                    <span style="display:inline-flex; align-items:center; gap:5px; background:#fff; border:1px solid #D8D2C4; font-size:10.5px; padding:3px 9px; border-radius:20px">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#153450" stroke-width="2.2"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/></svg>
+                      {{ d.dist }} da casa
+                    </span>
+                    <span style="background:#DCEEE4; color:#1E5C43; font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:20px">{{ d.vagas }} vagas no {{ sel.grupamento }}</span>
+                  </div>
+                </div>
+                <div style="text-align:right; flex-shrink:0">
+                  <p class="mono" style="margin:0 0 2px; font-size:9px; text-transform:uppercase; letter-spacing:.05em; color:#A9A192">Meta / atual</p>
+                  <p class="mono" style="margin:0; font-size:12px; color:#153450">{{ d.meta }}</p>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- cascata -->
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:15px 17px">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:11px">
+          <h3 class="disp" style="margin:0; font-size:13.5px; font-weight:600">Como a família será avisada</h3>
+          <span class="mono" style="font-size:10px; color:#6B6459">cascata escalonada · 3 dias</span>
+        </div>
+
+        <div style="display:flex; align-items:stretch; gap:0">
+          <sc-for list="{{ canais }}" as="c" hint-placeholder-count="4">
+            <div style="flex-grow:1; display:flex; align-items:center; gap:8px">
+              <div style="flex-grow:1; background:{{ c.bg }}; border:1px solid {{ c.borda }}; border-radius:9px; padding:9px 10px">
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px">
+                  <span class="mono" style="font-size:9px; color:{{ c.ink }}">{{ c.i }}</span>
+                  <span style="font-size:11.5px; font-weight:600; color:{{ c.ink }}">{{ c.nome }}</span>
+                </div>
+                <p class="mono" style="margin:0; font-size:9.5px; color:{{ c.subInk }}">{{ c.quando }}</p>
+              </div>
+              <sc-if value="{{ c.seta }}" hint-placeholder-val="{{ true }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C6BFAF" stroke-width="2.4" style="flex-shrink:0"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <p style="margin:11px 0 0; font-size:11px; color:#6B6459; line-height:1.5">
+          Cada tentativa fica registrada com canal, horário e se houve resposta — é o que hoje não existe e o que prova o cumprimento do prazo perante os órgãos que auditam a fila.
+        </p>
+      </div>
+
+      <!-- ação -->
+      <div style="background:#153450; border-radius:13px; padding:15px 17px; display:flex; align-items:center; gap:16px">
+        <div style="flex-grow:1; min-width:0">
+          <p class="disp" style="margin:0 0 3px; font-size:13.5px; font-weight:600; color:#fff">Oferecer {{ destinoNome }}</p>
+          <p style="margin:0; font-size:11.5px; color:#9DB4C7; line-height:1.45">
+            A família tem 3 dias úteis para confirmar. Se recusar ou não responder, a vaga volta para a fila e segue para o próximo.
+          </p>
+        </div>
+        <button style="flex-shrink:0; background:#E38B2C; color:#3A2205; border:none; border-radius:9px; padding:12px 22px; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A2205" stroke-width="2.2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Enviar convocação
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview": {"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { crianca: 0, destino: 0 };
+  }
+
+  renderVals() {
+    // Estrutura e vocabulário reais das bases; identificadores anonimizados,
+    // como na extração publicada pela SME (aluno_anon / responsavel_anon).
+    const FILA = [
+      { id:'aluno_0483217', pontos:76, grupamento:'Maternal I', bairro:'Jacarepaguá', nasc:'2024-03', espera:'7 meses', tag:'CadÚnico', tagBg:'#DCEEE4', tagInk:'#1E5C43' },
+      { id:'aluno_0491844', pontos:76, grupamento:'Maternal I', bairro:'Rio das Pedras', nasc:'2024-01', espera:'9 meses', tag:'CadÚnico', tagBg:'#DCEEE4', tagInk:'#1E5C43' },
+      { id:'aluno_0502119', pontos:55, grupamento:'Berçário II', bairro:'Jacarepaguá', nasc:'2024-08', espera:'5 meses', tag:'Ed. especial', tagBg:'#E6EEF4', tagInk:'#153450' },
+      { id:'aluno_0477630', pontos:53, grupamento:'Maternal II', bairro:'Freguesia', nasc:'2023-06', espera:'11 meses', tag:'CadÚnico', tagBg:'#DCEEE4', tagInk:'#1E5C43' },
+      { id:'aluno_0510085', pontos:51, grupamento:'Maternal I', bairro:'Cidade de Deus', nasc:'2024-04', espera:'4 meses', tag:'CadÚnico', tagBg:'#DCEEE4', tagInk:'#1E5C43' },
+      { id:'aluno_0468992', pontos:6,  grupamento:'Maternal II', bairro:'Anil', nasc:'2023-09', espera:'12 meses', tag:'Sem critério', tagBg:'#F4F2EB', tagInk:'#6B6459' }
+    ];
+    const ESCOLHAS = [
+      { nome:'CM Otávio Henrique de Oliveira', dist:'1,2 km', status:'Lista de espera', bg:'#FBE7CC', ink:'#7A4308' },
+      { nome:'EDI Senhora Perciliana Pereira', dist:'2,4 km', status:'Lista de espera', bg:'#FBE7CC', ink:'#7A4308' },
+      { nome:'CM Amiguinhos da Vila Sapê', dist:'3,8 km', status:'Lista de espera', bg:'#FBE7CC', ink:'#7A4308' },
+      { nome:'CM Criança do Futuro', dist:'6,1 km', status:'Distância alta', bg:'#F5DEDE', ink:'#6E2828' },
+      { nome:'EDI Anna Maria Niemeyer', dist:'1,9 km', status:'Lista de espera', bg:'#FBE7CC', ink:'#7A4308' }
+    ];
+    // Vagas reais de maio/2025 (Parceiras2025.xlsx) ao alcance desta unidade.
+    const DESTINOS = [
+      { nome:'CP Jardim Escola Turminha da Arca — JETA I', bairro:'Gardênia Azul', dist:'2,10 km', vagas:28, meta:'50 / 22' },
+      { nome:'CP AEMMAC — Anil', bairro:'Anil', dist:'2,91 km', vagas:29, meta:'80 / 51' },
+      { nome:'CP Espaço de Educação Infantil Cidade de Deus', bairro:'Cidade de Deus', dist:'2,16 km', vagas:11, meta:'120 / 109' }
+    ];
+    const CANAIS = [
+      { i:'1', nome:'Push no app', quando:'imediato', bg:'#DCEEE4', borda:'#BFDACB', ink:'#1E5C43', subInk:'#4E8A6E', seta:true },
+      { i:'2', nome:'WhatsApp', quando:'em 4 h sem leitura', bg:'#F4F2EB', borda:'#E4DFD2', ink:'#1C2229', subInk:'#6B6459', seta:true },
+      { i:'3', nome:'SMS', quando:'dia 2', bg:'#F4F2EB', borda:'#E4DFD2', ink:'#1C2229', subInk:'#6B6459', seta:true },
+      { i:'4', nome:'Ligação da unidade', quando:'dia 3', bg:'#F4F2EB', borda:'#E4DFD2', ink:'#1C2229', subInk:'#6B6459', seta:false }
+    ];
+
+    const ci = this.state.crianca;
+    const di = this.state.destino;
+    const s = FILA[ci];
+
+    return {
+      fila: FILA.map((c, i) => ({
+        ...c, pos: i + 1,
+        bg: i === ci ? '#F4F2EB' : '#fff',
+        corPos: i === ci ? '#7A4308' : '#A9A192',
+        pick: () => this.setState({ crianca: i })
+      })),
+      sel: {
+        ...s,
+        pos: ci + 1,
+        escolhas: ESCOLHAS.map((e, i) => ({ ...e, i: i + 1 }))
+      },
+      destinos: DESTINOS.map((d, i) => ({
+        ...d,
+        borda: i === di ? '2px solid #153450' : '1px solid #D8D2C4',
+        bg: i === di ? '#F7FAFC' : '#fff',
+        radio: i === di ? '2px solid #153450' : '2px solid #C6BFAF',
+        radioBg: '#fff',
+        dot: i === di ? '#153450' : 'transparent',
+        pick: () => this.setState({ destino: i })
+      })),
+      destinoNome: DESTINOS[di].nome,
+      canais: CANAIS
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "artboards": [
+    { "file": "Cidade.dc.html",     "x": 0,    "y": 0,    "w": 1440, "h": 900, "title": "1 · Cidade — onde está o descompasso", "is_interactive": false },
+    { "file": "Main.dc.html",       "x": 1560, "y": 0,    "w": 1440, "h": 900, "title": "2 · CRE — fila x vagas no mapa", "is_interactive": true },
+    { "file": "Realocacao.dc.html", "x": 3120, "y": 0,    "w": 1440, "h": 900, "title": "3 · Unidade — realocar uma criança", "is_interactive": true }
+  ],
+  "annotations": [
+    { "id": "fluxo", "x": 0, "y": -150, "w": 620, "text": "O painel desce em três zooms: cidade → CRE → criança.\nCada tela responde a uma pergunta do gestor: onde dói mais, quem está perto de uma vaga, e para quem ofereço agora." },
+    { "id": "dados-reais", "x": 1560, "y": -150, "w": 560, "text": "Números apurados do repositório CIT-SME-RJ/dadoscreche.\nO mapa usa as coordenadas reais das unidades — a malha viária é ilustrativa.\nO controle de raio no topo do quadro refiltra de verdade." },
+    { "id": "cascata", "x": 3120, "y": -150, "w": 560, "text": "A convocação sai pela cascata push → WhatsApp → SMS → ligação, e cada tentativa fica registrada.\nÉ o que hoje não existe e o que prova o cumprimento do prazo de 3 dias." }
+  ],
+  "launch": { "view": "canvas" }
+}

@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin:0; font-family:'Inter',system-ui,sans-serif; background:#EDEAE1; color:#1C2229; }
+    a { color:#153450; } a:hover { color:#0D2436; }
+    .mono { font-family:'IBM Plex Mono','SFMono-Regular',monospace; }
+    .disp { font-family:'Archivo',system-ui,sans-serif; }
+    .foco:hover .fh { fill:#7A4308; }
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; display:flex; flex-direction:column; background:#EDEAE1; overflow:hidden">
+
+  <!-- ── topbar ── -->
+  <div style="display:flex; align-items:center; gap:16px; padding:0 24px; height:56px; background:#153450; color:#fff; flex-shrink:0">
+    <div style="width:26px; height:26px; border-radius:50%; background:#fff; color:#153450; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700" class="disp">RJ</div>
+    <div style="display:flex; flex-direction:column; gap:1px">
+      <span class="mono" style="font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:#9DB4C7">Secretaria Municipal de Educação · Inscrição Creche</span>
+      <span class="disp" style="font-size:15px; font-weight:700">Painel de Descompasso</span>
+    </div>
+    <div style="flex-grow:1"></div>
+    <div style="display:flex; align-items:center; gap:8px; background:#1E4463; border:1px solid #2C5878; border-radius:8px; padding:6px 12px">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9DB4C7" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span style="font-size:12.5px; font-weight:600">7ª CRE — Jacarepaguá</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9DB4C7" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <span class="mono" style="font-size:11px; color:#9DB4C7">Processo 195 · 2025</span>
+  </div>
+
+  <!-- ── faixa de indicadores ── -->
+  <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px; padding:16px 24px 14px; flex-shrink:0">
+
+    <div style="background:#fff; border:1px solid #D8D2C4; border-left:3px solid #A83D3D; border-radius:11px; padding:13px 15px">
+      <p class="mono" style="margin:0 0 5px; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:#6B6459">Crianças em espera</p>
+      <p class="disp" style="margin:0 0 3px; font-size:26px; font-weight:700; color:#6E2828">{{ kpi.fila }}</p>
+      <p style="margin:0; font-size:11px; color:#6B6459">em {{ kpi.unFila }} unidades desta CRE</p>
+    </div>
+
+    <div style="background:#fff; border:1px solid #D8D2C4; border-left:3px solid #2E8B65; border-radius:11px; padding:13px 15px">
+      <p class="mono" style="margin:0 0 5px; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:#6B6459">Vagas ociosas a {{ raioTxt }}</p>
+      <p class="disp" style="margin:0 0 3px; font-size:26px; font-weight:700; color:#1E5C43">{{ kpi.vagas }}</p>
+      <p style="margin:0; font-size:11px; color:#6B6459">em {{ kpi.unVagas }} creches parceiras</p>
+    </div>
+
+    <div style="background:#fff; border:1px solid #D8D2C4; border-left:3px solid #E38B2C; border-radius:11px; padding:13px 15px">
+      <p class="mono" style="margin:0 0 5px; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:#6B6459">Realocáveis agora</p>
+      <p class="disp" style="margin:0 0 3px; font-size:26px; font-weight:700; color:#7A4308">{{ kpi.vagas }}</p>
+      <p style="margin:0; font-size:11px; color:#6B6459">crianças que caberiam sem obra nem verba</p>
+    </div>
+
+    <div style="background:#153450; border:1px solid #153450; border-radius:11px; padding:13px 15px; color:#fff">
+      <p class="mono" style="margin:0 0 5px; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:#9DB4C7">Focos críticos</p>
+      <p class="disp" style="margin:0 0 3px; font-size:26px; font-weight:700">{{ kpi.focos }}</p>
+      <p style="margin:0; font-size:11px; color:#9DB4C7">unidades com fila e vaga vizinha</p>
+    </div>
+  </div>
+
+  <!-- ── corpo ── -->
+  <div style="display:flex; gap:16px; padding:0 24px 20px; flex-grow:1; min-height:0">
+
+    <!-- mapa -->
+    <div style="width:556px; flex-shrink:0; background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:14px 16px 10px; display:flex; flex-direction:column">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:2px">
+        <h2 class="disp" style="margin:0; font-size:14px; font-weight:600">Onde a fila e a vaga se encostam</h2>
+        <span class="mono" style="font-size:10px; color:#6B6459">raio {{ raioTxt }}</span>
+      </div>
+      <p style="margin:0 0 8px; font-size:11.5px; color:#6B6459; line-height:1.45">
+        Posições reais das unidades. Clique num foco para ver as vagas ao redor.
+      </p>
+
+      <div style="flex-grow:1; position:relative; background:#F4F2EB; border:1px solid #E4DFD2; border-radius:9px; overflow:hidden">
+        <svg viewBox="0 0 560 740" style="position:absolute; inset:0; width:100%; height:100%" preserveAspectRatio="xMidYMid meet">
+          <!-- leito esquemático: eixos viários principais da região -->
+          <path d="M40 120 L250 300 L360 620 L420 730" stroke="#DED8C9" stroke-width="14" fill="none" stroke-linecap="round"/>
+          <path d="M20 430 L200 470 L340 520 L540 600" stroke="#DED8C9" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M330 30 L320 160 L300 460 L380 615" stroke="#E6E1D3" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <text x="46" y="112" class="mono" font-size="9.5" fill="#A9A192">CURICICA</text>
+          <text x="452" y="672" class="mono" font-size="9.5" fill="#A9A192">FREGUESIA</text>
+          <text x="232" y="512" class="mono" font-size="9.5" fill="#A9A192">CIDADE DE DEUS</text>
+          <text x="300" y="92" class="mono" font-size="9.5" fill="#A9A192">PRAÇA SECA</text>
+          <text x="150" y="358" class="mono" font-size="9.5" fill="#A9A192">ITANHANGÁ</text>
+
+          <!-- vagas ociosas -->
+          <sc-for list="{{ vagas }}" as="v" hint-placeholder-count="10">
+            <g>
+              <circle cx="{{ v.x }}" cy="{{ v.y }}" r="{{ v.r }}" fill="#DCEEE4" stroke="#2E8B65" stroke-width="1.6"/>
+              <text x="{{ v.x }}" y="{{ v.ty }}" text-anchor="middle" font-size="10" font-weight="600" fill="#1E5C43" font-family="Inter, sans-serif">{{ v.n }}</text>
+            </g>
+          </sc-for>
+
+          <!-- focos de fila -->
+          <sc-for list="{{ focos }}" as="f" hint-placeholder-count="12">
+            <g class="foco" onClick="{{ f.pick }}" style="cursor:pointer">
+              <circle cx="{{ f.x }}" cy="{{ f.y }}" r="{{ f.ring }}" fill="none" stroke="{{ f.stroke }}" stroke-width="{{ f.sw }}"/>
+              <circle class="fh" cx="{{ f.x }}" cy="{{ f.y }}" r="{{ f.r }}" fill="{{ f.fill }}" fill-opacity="0.9"/>
+              <text x="{{ f.x }}" y="{{ f.ty }}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">{{ f.n }}</text>
+            </g>
+          </sc-for>
+        </svg>
+
+        <div style="position:absolute; left:10px; bottom:10px; display:flex; flex-direction:column; gap:5px; background:#FFFFFFEE; border:1px solid #E4DFD2; border-radius:8px; padding:8px 10px">
+          <div style="display:flex; align-items:center; gap:7px">
+            <span style="width:11px; height:11px; border-radius:50%; background:#A83D3D; display:inline-block"></span>
+            <span style="font-size:10.5px; color:#6B6459">crianças na fila</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:7px">
+            <span style="width:11px; height:11px; border-radius:50%; background:#DCEEE4; border:1.5px solid #2E8B65; display:inline-block"></span>
+            <span style="font-size:10.5px; color:#6B6459">vagas ociosas (parceiras)</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="mono" style="margin:8px 0 0; font-size:9.5px; color:#A9A192; line-height:1.5">
+        Mapa esquemático — posições relativas fiéis às coordenadas reais das unidades. Malha viária ilustrativa.
+      </p>
+    </div>
+
+    <!-- painel lateral -->
+    <div style="flex-grow:1; display:flex; flex-direction:column; gap:12px; min-width:0">
+
+      <!-- foco selecionado -->
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:15px 17px">
+        <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px">
+          <div style="width:38px; height:38px; border-radius:9px; background:#F5DEDE; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A83D3D" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5v.01"/></svg>
+          </div>
+          <div style="flex-grow:1; min-width:0">
+            <p class="disp" style="margin:0 0 2px; font-size:15px; font-weight:600">{{ sel.nome }}</p>
+            <p class="mono" style="margin:0; font-size:10.5px; color:#6B6459">{{ sel.bairro }} · unidade {{ sel.cod }}</p>
+          </div>
+          <div style="text-align:right; flex-shrink:0">
+            <p class="disp" style="margin:0; font-size:24px; font-weight:700; color:#6E2828">{{ sel.n }}</p>
+            <p class="mono" style="margin:0; font-size:9.5px; color:#6B6459; text-transform:uppercase; letter-spacing:.05em">na fila</p>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:9px; background:#DCEEE4; border:1px solid #BFDACB; border-radius:9px; padding:10px 13px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E5C43" stroke-width="1.8" style="flex-shrink:0"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <p style="margin:0; font-size:12.5px; color:#1E5C43; line-height:1.45">
+            <strong>{{ sel.vagasTotal }} vagas ociosas</strong> em {{ sel.nVagas }} creches parceiras num raio de {{ raioTxt }}.
+          </p>
+        </div>
+      </div>
+
+      <!-- vagas próximas -->
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:15px 17px 8px; flex-grow:1; min-height:0; display:flex; flex-direction:column">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px">
+          <h3 class="disp" style="margin:0; font-size:13.5px; font-weight:600">Vagas alcançáveis</h3>
+          <span class="mono" style="font-size:10px; color:#6B6459">meta contratada · maio/2025</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; overflow:hidden">
+          <sc-for list="{{ sel.vagas }}" as="v" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:13px; padding:11px 0; border-bottom:1px solid #EDEAE1">
+              <div style="width:52px; flex-shrink:0; text-align:center">
+                <p class="mono disp" style="margin:0; font-size:14px; font-weight:600; color:#153450">{{ v.d }}</p>
+                <p class="mono" style="margin:0; font-size:9px; color:#A9A192">km</p>
+              </div>
+              <div style="flex-grow:1; min-width:0">
+                <p style="margin:0 0 3px; font-size:12.5px; font-weight:600">{{ v.nome }}</p>
+                <p style="margin:0; font-size:11px; color:#6B6459">{{ v.bairro }} · {{ v.grupos }}</p>
+              </div>
+              <span style="flex-shrink:0; display:inline-flex; align-items:center; gap:5px; background:#DCEEE4; color:#1E5C43; font-size:11.5px; font-weight:600; padding:4px 11px; border-radius:20px">{{ v.n }} vagas</span>
+              <button onClick="{{ v.realocar }}" style="flex-shrink:0; background:#153450; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px">
+                Realocar
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ sel.semVaga }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px 0; text-align:center">
+            <p style="margin:0; font-size:12px; color:#6B6459">Nenhuma vaga parceira dentro de {{ raioTxt }}. Aumente o raio na barra acima do quadro.</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- ranking -->
+      <div style="background:#fff; border:1px solid #D8D2C4; border-radius:13px; padding:14px 17px">
+        <h3 class="disp" style="margin:0 0 10px; font-size:13.5px; font-weight:600">Maiores descompassos da CRE</h3>
+        <div style="display:flex; flex-direction:column; gap:7px">
+          <sc-for list="{{ ranking }}" as="r" hint-placeholder-count="5">
+            <div onClick="{{ r.pick }}" style="display:flex; align-items:center; gap:11px; cursor:pointer">
+              <span class="mono" style="width:14px; flex-shrink:0; font-size:10.5px; color:#A9A192">{{ r.pos }}</span>
+              <span style="width:186px; flex-shrink:0; font-size:11.5px; font-weight:{{ r.peso }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ r.nome }}</span>
+              <div style="flex-grow:1; height:16px; background:#F4F2EB; border-radius:4px; position:relative; overflow:hidden">
+                <div style="position:absolute; left:0; top:0; bottom:0; width:{{ r.pctFila }}; background:#D9A0A0"></div>
+                <div style="position:absolute; left:0; top:0; bottom:0; width:{{ r.pctVaga }}; background:#2E8B65"></div>
+              </div>
+              <span class="mono" style="width:78px; flex-shrink:0; text-align:right; font-size:10.5px; color:#6B6459">{{ r.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:16px; margin-top:11px; padding-top:9px; border-top:1px solid #EDEAE1">
+          <span style="display:flex; align-items:center; gap:6px; font-size:10.5px; color:#6B6459"><span style="width:9px; height:9px; border-radius:2px; background:#D9A0A0"></span>fila</span>
+          <span style="display:flex; align-items:center; gap:6px; font-size:10.5px; color:#6B6459"><span style="width:9px; height:9px; border-radius:2px; background:#2E8B65"></span>vagas ao redor</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{
+  "raio": {"editor":"range","default":3,"min":1,"max":3,"step":0.5,"unit":" km","section":"Busca"},
+  "$preview": {"width":1440,"height":900}
+}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 0 };
+  }
+
+  // Dados apurados do repositório CIT-SME-RJ/dadoscreche.
+  // Fila: situacao='Lista de espera', processo 195 (2025), CRE 7.
+  // Vagas: Parceiras2025.xlsx, aba MAIO-2025, coluna Vagas por grupamento.
+  // x/y: projeção linear das coordenadas reais no bbox da região.
+  dados() {
+    const F = [
+      { n:765, x:468, y:679, nome:'Creche Municipal Rio Novo — Rio das Flores', bairro:'Freguesia', cod:'0716609' },
+      { n:580, x:538, y:710, nome:'EDI Escritora Clarice Lispector', bairro:'Rio das Pedras', cod:'0716812' },
+      { n:560, x:496, y:700, nome:'Creche Municipal Otávio Henrique de Oliveira', bairro:'Jacarepaguá', cod:'0716601' },
+      { n:473, x:474, y:694, nome:'EDI Professora Emília Maria Vieira de Oliveira', bairro:'Rio das Pedras', cod:'0716814' },
+      { n:322, x:264, y:524, nome:'CP Espaço de Educação Infantil Cidade de Deus', bairro:'Cidade de Deus', cod:'07016' },
+      { n:321, x:308, y:503, nome:'EDI Senhora Perciliana Pereira', bairro:'Jacarepaguá', cod:'0716806' },
+      { n:303, x:68,  y:650, nome:'Creche Municipal Maria da Conceição Silveira', bairro:'Jacarepaguá', cod:'0716604' },
+      { n:293, x:105, y:461, nome:'Creche Municipal Criança do Futuro', bairro:'Jacarepaguá', cod:'0716607' },
+      { n:280, x:487, y:720, nome:'EDI Anna Maria Niemeyer', bairro:'Jacarepaguá', cod:'0716807' },
+      { n:270, x:283, y:485, nome:'CP Centro Integrado São José', bairro:'Cidade de Deus', cod:'07022' },
+      { n:241, x:178, y:490, nome:'Creche Municipal Amiguinhos da Vila Sapê', bairro:'Jacarepaguá', cod:'0716610' },
+      { n:234, x:61,  y:547, nome:'Creche Municipal Augusto de Carvalho Torres', bairro:'Curicica', cod:'0716613' },
+      { n:233, x:332, y:103, nome:'CP Creche Vale do Sol Praça Seca', bairro:'Praça Seca', cod:'07040' },
+      { n:231, x:117, y:540, nome:'EDI Medalhista Olímpico', bairro:'Curicica', cod:'0716815' }
+    ];
+    const V = [
+      { n:43, x:376, y:613, nome:'CP Jardim Escola Turminha da Arca — JETA I', bairro:'Gardênia Azul', grupos:'Maternal I e II' },
+      { n:6,  x:390, y:598, nome:'CP Jardim Escola Turminha da Arca — JETA', bairro:'Jacarepaguá', grupos:'Maternal II' },
+      { n:29, x:420, y:510, nome:'CP AEMMAC — Anil', bairro:'Anil', grupos:'Maternal I' },
+      { n:28, x:250, y:538, nome:'CP Espaço de Educação Infantil Cidade de Deus', bairro:'Cidade de Deus', grupos:'Berçário I, Maternal I e II' },
+      { n:1,  x:316, y:455, nome:'CP Semente de Amor', bairro:'Freguesia', grupos:'Maternal I' },
+      { n:4,  x:143, y:532, nome:'CP Instituto Educacional Diva Alves II', bairro:'Jacarepaguá', grupos:'Berçário I, Maternal I' },
+      { n:3,  x:22,  y:417, nome:'CP Instituto Educacional Diva Alves', bairro:'Jacarepaguá', grupos:'Maternal I e II' },
+      { n:49, x:176, y:370, nome:'CP Creche Mundo Mágico I', bairro:'Itanhangá', grupos:'Berçário I e II, Maternal II' },
+      { n:3,  x:345, y:116, nome:'CP Creche Vale do Sol Praça Seca', bairro:'Praça Seca', grupos:'Berçário II' },
+      { n:6,  x:321, y:150, nome:'CP Creche São Paulo Apóstolo', bairro:'Mato Alto', grupos:'Maternal I' },
+      { n:6,  x:390, y:22,  nome:'CP Creche Cardeal Câmara', bairro:'Campinho', grupos:'Berçário II, Maternal II' },
+      { n:1,  x:254, y:21,  nome:'CP CAAD Universo das Flores', bairro:'Vila Valqueire', grupos:'Maternal II' }
+    ];
+    // vizinhança real: índices de V ao alcance de cada foco, com a distância apurada
+    const VIZ = [
+      [[0,1.60],[1,1.62],[2,2.71]], [[0,2.66],[1,2.68]], [[0,2.10],[1,2.11],[2,2.91]],
+      [[0,2.04],[1,2.06],[2,2.84]], [[3,0.00],[2,2.16],[5,1.71],[7,2.93]],
+      [[4,0.69],[3,0.69],[2,1.56],[7,2.61]], [[5,2.00]], [[5,1.15],[6,1.34],[7,1.64],[4,2.99]],
+      [[0,2.18],[1,2.21]], [[3,0.62],[4,0.62],[5,1.30],[2,2.12]],
+      [[5,0.77],[3,1.30],[7,1.71],[6,2.44]], [[5,1.17],[6,1.24],[7,2.85]],
+      [[8,0.00],[9,0.85],[10,1.29],[11,2.19]], [[5,0.66],[6,1.55],[7,2.51]]
+    ];
+    return { F, V, VIZ };
+  }
+
+  renderVals() {
+    const raio = Number(this.props.raio ?? 3);
+    const { F, V, VIZ } = this.dados();
+    const sel = this.state.sel;
+
+    const vizDe = (i) => VIZ[i].filter(([, d]) => d <= raio)
+      .map(([j, d]) => ({ ...V[j], d: d.toFixed(2) }));
+
+    const focos = F.map((f, i) => {
+      const r = 9 + Math.sqrt(f.n) * 0.62;
+      const on = i === sel;
+      return {
+        ...f, x: f.x, y: f.y, r: r.toFixed(1), ty: (f.y + 3.6).toFixed(1),
+        ring: (r + 5).toFixed(1),
+        stroke: on ? '#7A4308' : 'transparent',
+        sw: on ? 3 : 0,
+        fill: on ? '#7A4308' : '#A83D3D',
+        pick: () => this.setState({ sel: i })
+      };
+    });
+
+    const vagas = V.map((v) => {
+      const r = 7 + Math.sqrt(v.n) * 0.78;
+      return { ...v, r: r.toFixed(1), ty: (v.y + 3.4).toFixed(1) };
+    });
+
+    const viz = vizDe(sel);
+    const s = F[sel];
+    const selVagas = viz.map((v) => ({
+      ...v,
+      realocar: () => this.setState({ sel })
+    }));
+
+    const alcance = F.reduce((acc, _, i) => acc + vizDe(i).reduce((a, v) => a + v.n, 0), 0);
+    const comVaga = F.filter((_, i) => vizDe(i).length > 0).length;
+    const vagasUnicas = new Set();
+    F.forEach((_, i) => vizDe(i).forEach((v) => vagasUnicas.add(v.nome)));
+    const totalVagas = [...vagasUnicas].reduce((a, nome) => a + (V.find((v) => v.nome === nome)?.n ?? 0), 0);
+
+    const maxFila = F[0].n;
+    const ranking = F.slice(0, 6).map((f, i) => {
+      const vs = vizDe(i).reduce((a, v) => a + v.n, 0);
+      return {
+        pos: i + 1, nome: f.nome.replace(/^(Creche Municipal|EDI|CP) /, ''),
+        peso: i === sel ? 700 : 500,
+        pctFila: ((f.n / maxFila) * 100).toFixed(1) + '%',
+        pctVaga: ((vs / maxFila) * 100).toFixed(1) + '%',
+        label: f.n + ' / ' + vs,
+        pick: () => this.setState({ sel: i })
+      };
+    });
+
+    return {
+      raioTxt: raio.toFixed(1).replace('.0', '') + ' km',
+      focos, vagas, ranking,
+      kpi: {
+        fila: F.reduce((a, f) => a + f.n, 0).toLocaleString('pt-BR'),
+        unFila: F.length,
+        vagas: totalVagas,
+        unVagas: vagasUnicas.size,
+        focos: comVaga
+      },
+      sel: {
+        nome: s.nome, bairro: s.bairro, cod: s.cod, n: s.n,
+        vagas: selVagas,
+        vagasTotal: viz.reduce((a, v) => a + v.n, 0),
+        nVagas: viz.length,
+        semVaga: viz.length === 0
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

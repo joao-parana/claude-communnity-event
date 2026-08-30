@@ -114,6 +114,63 @@ Os diretórios estão vazios com `.gitkeep`. Ao começar a escrever código:
 3. **Ícones** — `public/icons/` precisa de 192×192 e 512×512 PNG, senão o navegador não oferece
    instalar o PWA. É o passo mais fácil de esquecer e o que quebra a demo de push no iOS.
 
+---
+
+## Publicação
+
+**Alvo: [Hugging Face Spaces](https://huggingface.co/new-space)** — SDK `docker`, porta `7860`.
+
+Escolhido porque o Space gratuito **só dorme após 48 h de inatividade** (o Render free dorme em
+15 min, com 30–60 s de cold start — fatal na janela em que os jurados abrem ~40 projetos). Além
+disso: 2 vCPU / 16 GB, HTTPS automático, sem cartão de crédito, deploy por `git push`.
+Fly.io e Koyeb encerraram o free tier em 2026; Railway virou trial de US$ 5.
+
+### Passos
+
+```bash
+# 1. crie o Space em huggingface.co/new-space  →  SDK: Docker
+# 2. o README.md do Space precisa do bloco YAML de metadados:
+cp app/README_HF.md /caminho/do/space/README.md
+
+# 3. copie o app e publique
+git clone https://huggingface.co/spaces/<user>/fila-certa
+cp -r app/{Dockerfile,backend,frontend} /caminho/do/space/
+cd /caminho/do/space && git add -A && git commit -m "deploy" && git push
+```
+
+O build roda no servidor (~3–5 min na primeira vez). A URL fica
+`https://<user>-fila-certa.hf.space`.
+
+### Segredos
+
+As chaves VAPID vão em **Settings → Variables and secrets**, nunca no repositório. Em runtime
+chegam como variáveis de ambiente comuns (`os.environ`).
+
+### Três armadilhas
+
+1. **Acesse o domínio direto (`*.hf.space`), não a página do HF.** O Space também é exibido dentro
+   de um iframe em `huggingface.co/spaces/...`, e ali o navegador **não oferece instalar o PWA** nem
+   registra push. Divulgue sempre a URL direta — inclusive no QR code da apresentação.
+2. **O disco é efêmero:** o que for gravado se perde a cada rebuild. Por isso o `Dockerfile` aponta
+   o DuckDB para `/tmp` e o banco é semeado no boot. Para a demo basta; persistência real exigiria
+   o add-on de US$ 5/mês ou um Postgres externo (Supabase/Neon têm free tier).
+3. **A imagem builda o frontend e serve tudo pelo FastAPI** — uma porta, um processo, sem CORS.
+   Se separar front e back depois, lembre de configurar CORS.
+
+### Plano B
+
+Se o HF Spaces falhar na hora, **Render** funciona com o mesmo Dockerfile (mude a porta para
+`$PORT`). Nesse caso, mantenha um ping externo (cron-job.org, UptimeRobot) batendo a cada 10 min
+**durante a janela de avaliação** — é o que impede o spin down de matar a demo.
+
+### Antes de divulgar a URL
+
+- [ ] Abrir a URL direta no celular e confirmar que o navegador oferece instalar
+- [ ] Ícones 192 e 512 px presentes em `public/icons/`
+- [ ] Push testado no Android com o app fechado
+- [ ] Seed carregado (a tela 2 mostra dados, não vazio)
+- [ ] QR code apontando para a URL direta, testado por outra pessoa
+
 ## Convenções
 
 - Código em **Python 3.11+**, identificadores em inglês, comentários e docs em português.
