@@ -1,0 +1,6 @@
+# Núcleo — suficiente para os comandos units / cres / search
+httpx>=0.27
+
+# Crawling dos portais (comandos crawl / sitemap / pdfs).
+# Após instalar, rode uma vez: crawl4ai-setup  (baixa o Chromium do Playwright)
+crawl4ai>=0.4.0
