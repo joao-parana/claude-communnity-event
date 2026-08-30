@@ -174,33 +174,100 @@ diretor. Classificação roda em janeiro; em fevereiro/março o telefone já mud
 
 ### Dados fornecidos
 
-Quatro tabelas, **reais e anonimizadas**, 2021–2025, com dicionário: inscrições por opção (estados
-`confirmado`/`selecionado`/`cancelado`), respostas socioeconômicas (**o questionário mudou entre 2021
-e 2025** — cuidado ao comparar séries), matriculados (rede pública e parceiras), e unidades com
-**lat/lon**. Mais as **microáreas do IPP**.
+**Repositório oficial: https://github.com/CIT-SME-RJ/dadoscreche/**
+
+```bash
+git clone https://github.com/CIT-SME-RJ/dadoscreche.git
+```
+
+Materiais de apoio linkados no README do repo: [apresentação da
+SME](https://rioeduca-my.sharepoint.com/:p:/g/personal/gabrielledomingues_rioeduca_net/IQAlvS8n9w7OQ6WcJK2T-wr6AVcXGJuT7MdyJ41qQtqlff0?e=xkQwfk)
+e [briefing completo](https://docs.google.com/document/d/1jZenYEKR2hJOVrxLXWM0xjxmoiohAqEl/edit?usp=sharing).
+
+| Pasta / arquivo | Conteúdo | Grão |
+| --- | --- | --- |
+| `Bases IC_ ClassificadoseFila/01_QueryA…csv.gz` | **837.179** linhas | uma opção de creche escolhida |
+| `…/02_QueryB…csv.gz` | **4.357.119** linhas | uma pergunta respondida |
+| `…/03_QueryC_PerguntasComDescricao.csv` | 65 linhas | uma pergunta por processo/ano — **a régua de pontuação** |
+| `…/04_UnidadesEscolaresComEndereco.csv` | 2.188 linhas | uma unidade escolar — **sem cabeçalho** |
+| `OferecimentosEvagas/` | XLSX por ano | vagas e matriculados, públicas e parceiras |
+| `OferecimentosEvagas/Unidades_Unificadas_com_Localizacao.xlsx` | 1.942 unidades | **CRE + microárea + lat/lon** |
+| `Microáreas_SME_revisãoIPP/` | shapefile | polígonos das microáreas |
+| `NascidosvivosRJ.xlsx` | 169 bairros, 2016–2026 | **demanda potencial** |
+
+Escopo: 5 processos — 179 (2021), 181 (2022), 184 (2023), 194 (2024), 195 (2025). **2026 não está
+incluído.** Separador `;`, UTF-8 **com BOM**.
+
+**A análise exploratória está resumida no [README.md](README.md).** Leia antes de modelar — há
+armadilhas que custam horas.
 
 Anonimização — **removido**: idade real, endereço exato (só bairro e CEP), data de nascimento (só ano
 e mês). **Preservado**: sequência do processo, lógica da pontuação, relações entre as tabelas,
-dinâmica real de transição de estados.
+dinâmica real de transição de estados, e a **trajetória da mesma criança entre anos** (`aluno_anon`
+é estável nos 5 processos).
 
-> São dados reais e **podem ter ruído**. Inspecione e limpe antes de concluir qualquer coisa.
+> ⚠️ O próprio repositório avisa: **"indicadores gerados a partir dos dados NÃO representam a
+> realidade"**. Trate níveis absolutos como ilustrativos; o que se sustenta são **padrões relativos**
+> e a dinâmica do processo. Nunca apresente uma taxa dessas base como estatística oficial da cidade.
 
-### Sobre a decisão de fazer app iOS/Android
+## 3b. A solução do time: app **Fila Certa**
 
-A SME **não pediu um aplicativo** — descreveu o problema. O app é decisão do time e precisa se
-sustentar sozinha. A análise completa está na **§8 de
-[`docs/desafio-inscricao-creche.md`](docs/desafio-inscricao-creche.md)**; em resumo:
+📱 **Especificação: [`docs/spec-app-fila-certa.md`](docs/spec-app-fila-certa.md)**
+🎨 **Mockup (6 telas): [`docs/mockup_fila_certa_v1.html`](docs/mockup_fila_certa_v1.html)**
 
-- **A favor:** push resolve o nº 4/5, e a resposta ativa ("não tenho mais interesse") ataca o nº 6
-  liberando a vaga sem consumir os 3 dias.
-- **Contra:** o público é o de maior vulnerabilidade social; instalar app é fricção real, e
-  **WhatsApp/SMS já estão no celular** — foram justamente os canais que falharam, por contato
-  desatualizado, não por ausência de canal. Além disso, o critério de maior peso é *"dá para colocar
-  amanhã na prefeitura"*, e app em loja não estreia amanhã.
-- **Recomendação:** separe o **canal** do **núcleo de valor** (detectar vaga → alcançar a família →
-  capturar resposta em horas → devolver a vaga ao fluxo). Construa o núcleo com o canal atrás de uma
-  interface. Se o app precisa ser o rosto da solução, **PWA** entrega push sem loja nem instalação e
-  integra ao `matricula.rio` existente.
+App para o **responsável** (pai/mãe) da criança inscrita. Posicionamento decidido, e é o ponto mais
+importante da spec:
+
+> **O app não reimplementa a inscrição.** Ela continua no `matricula.rio`. O Fila Certa cobre a
+> lacuna entre *inscrever-se* e *ocupar a vaga* — exatamente onde o processo perde crianças.
+> Vínculo por **CPF do responsável**, sem cadastro novo.
+
+### As 6 telas e o que cada uma ataca
+
+| # | Tela | Ponto de quebra | Mecanismo |
+| --- | --- | --- | --- |
+| 1 | Consultar inscrição | — | Entrada por CPF, sem conta nova |
+| 2 | **Painel da inscrição** | **4, 1, 7** | Alerta e edição de contato; selo de viabilidade por distância; oferta de vaga próxima com **"Tenho interesse" / "Agora não"** |
+| 3 | Documentos | **3** | Upload por foto substitui ida presencial; IA faz pré-checagem, **unidade confirma** |
+| 4 | **Convocação** | **4, 5, 6** | Push + contagem regressiva + confirmação em um toque |
+| 5 | Sugestões perto de você | **1, 8** | Unidades fora das 5 escolhas, por distância |
+| 6 | Entenda sua pontuação | **2** | Régua comparativa + por que cada critério existe |
+
+**A peça mais valiosa é o botão "Agora não"** (tela 2): capturar declínio em horas libera a vaga sem
+consumir os 3 dias, atacando o efeito cascata. Hoje só existe o silêncio, e o silêncio custa 3 dias
+por elo da fila.
+
+### ⚠️ Já existe o app oficial `Rioeduca em Casa`
+
+O briefing da SME diz que a inscrição pode ser feita *"pelo portal matricula.rio **ou pelo app
+Rioeduca em Casa**"*. Ele está publicado nas duas lojas (Android `tv.ip.rioeduca`; iOS
+`id1554165839`), é gratuito e **não consome o plano de dados**.
+
+**Isso reposiciona a proposta:** o Fila Certa tem muito mais chance de ser adotado como **módulo
+dentro do Rioeduca em Casa** do que como app novo — o que elimina a fricção de instalação, a maior
+objeção contra a hipótese de app, e responde ao critério *"dá para colocar amanhã na prefeitura"*.
+Trate o app autônomo do mockup como **vitrine da demo** e o módulo integrado como **proposta de
+adoção**.
+
+### Lacunas que o app expõe — e que são a proposta
+
+Duas coisas que o app precisa **não existem na base nem no sistema atual**:
+
+1. **Contato editável do responsável** — suprimido na anonimização, e no sistema real simplesmente
+   não há campo. É a causa-raiz do ponto de quebra nº 4.
+2. **Timestamp de mudança de status** — o briefing confirma que não há registro de quando uma opção
+   virou "Selecionada"; nem família nem equipe sabem o prazo restante.
+
+Não escondam isso na apresentação: **são a proposta**, não falha da base. Mockar na demo e declarar
+como requisito de integração.
+
+### Pontos ainda em aberto
+
+- **Autenticação.** O mockup entra só com CPF, o que expõe dados de uma criança a quem souber o CPF
+  do responsável. Basta para a demo; para a proposta, exige 2º fator ou gov.br.
+- **Canal.** Módulo no Rioeduca em Casa · PWA · app nativo novo. Push nativo não pode ser o único
+  canal — quem não instala precisa continuar sendo alcançado por WhatsApp/SMS.
+- **Assets do mockup vêm de CDN.** Embuta antes de publicar ou apresentar offline.
 
 ## 4. SMDE — Secretaria Municipal de Desenvolvimento Econômico
 

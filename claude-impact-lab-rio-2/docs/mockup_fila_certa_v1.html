@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Fila Certa — mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<style>
+  :root{
+    --paper:#EDEAE1;
+    --ink:#1C2229;
+    --ink-soft:#6B6459;
+    --navy:#153450;
+    --navy-deep:#0D2436;
+    --amber:#E38B2C;
+    --amber-ink:#7A4308;
+    --amber-fill:#FBE7CC;
+    --green:#2E8B65;
+    --green-fill:#DCEEE4;
+    --green-ink:#1E5C43;
+    --brick:#B4553A;
+    --brick-fill:#F7E1D8;
+    --brick-ink:#7A3620;
+    --red:#A83D3D;
+    --red-fill:#F5DEDE;
+    --red-ink:#6E2828;
+    --line:#D8D2C4;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  .wrap{max-width:1280px;margin:0 auto;padding:40px 24px 64px;}
+  .masthead{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+  .crest{width:34px;height:34px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;flex-shrink:0;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+  h1.title{font-family:'Archivo',sans-serif;font-weight:700;font-size:34px;margin:6px 0 6px;color:var(--navy-deep);}
+  p.lede{font-size:15px;color:var(--ink-soft);max-width:640px;line-height:1.6;margin:0 0 8px;}
+  .callout{display:inline-flex;align-items:center;gap:8px;background:var(--amber-fill);color:var(--amber-ink);font-size:13px;font-weight:600;padding:7px 14px;border-radius:20px;margin:14px 0 40px;}
+  .wave{height:10px;background-image:repeating-linear-gradient(-45deg, var(--navy) 0 4px, transparent 4px 8px);opacity:.35;margin:0 0 40px;border-radius:4px;}
+
+  .screens{display:flex;gap:28px;overflow-x:auto;padding-bottom:20px;scroll-snap-type:x proximity;}
+  .screen-block{flex:0 0 auto;scroll-snap-align:start;width:296px;}
+  .screen-label{font-family:'Archivo',sans-serif;font-weight:600;font-size:14px;color:var(--navy-deep);margin:0 0 4px;}
+  .screen-sub{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;line-height:1.5;min-height:52px;}
+
+  .phone{width:296px;height:610px;background:var(--card);border-radius:32px;border:8px solid var(--navy-deep);box-shadow:0 14px 30px rgba(13,36,54,0.18);overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .notch{height:22px;background:var(--navy-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .notch::after{content:'';width:60px;height:6px;border-radius:4px;background:#0006;}
+  .topbar{background:var(--navy);color:#fff;padding:14px 16px 12px;flex-shrink:0;}
+  .topbar .app-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:#B9CBDA;margin:0 0 2px;}
+  .topbar .app-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;margin:0;}
+  .content{flex:1;overflow-y:auto;padding:16px 14px 90px;background:var(--paper);}
+  .content::-webkit-scrollbar{width:0;}
+  .navbar{position:absolute;bottom:0;left:0;right:0;height:64px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;padding-bottom:6px;}
+  .navitem{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;color:var(--ink-soft);}
+  .navitem.active{color:var(--navy);}
+  .navitem i{font-size:19px;}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;}
+  .card h3{font-family:'Archivo',sans-serif;font-size:14px;font-weight:600;margin:0 0 4px;color:var(--ink);}
+  .card p{font-size:12.5px;color:var(--ink-soft);margin:0;line-height:1.5;}
+  .field-label{font-size:11.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;margin:0 0 6px;}
+  .input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px;font-family:'IBM Plex Mono',monospace;color:var(--ink);background:#fff;}
+  .btn-primary{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:13px;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .btn-secondary{width:100%;background:#fff;color:var(--navy);border:1.5px solid var(--navy);border-radius:10px;padding:11px;font-weight:600;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .link-quiet{display:block;text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:14px;text-decoration:underline;}
+
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+  .pill-wait{background:var(--amber-fill);color:var(--amber-ink);}
+  .pill-confirm{background:var(--green-fill);color:var(--green-ink);}
+  .pill-cancel{background:var(--red-fill);color:var(--red-ink);}
+  .pill-pending{background:var(--brick-fill);color:var(--brick-ink);}
+  .pill-ok{background:var(--green-fill);color:var(--green-ink);}
+
+  .alert-card{background:var(--amber-fill);border:1px solid #EBC488;border-radius:14px;padding:13px 14px;margin-bottom:14px;}
+  .alert-card .row{display:flex;gap:10px;align-items:flex-start;}
+  .alert-card i{font-size:18px;color:var(--amber-ink);margin-top:1px;}
+  .alert-card h4{font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;margin:0 0 3px;color:var(--amber-ink);}
+  .alert-card p{font-size:11.5px;color:#6b4a17;margin:0 0 10px;line-height:1.45;}
+  .alert-card button{background:var(--navy);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;}
+
+  .choice-row{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+  .choice-row:last-child{border-bottom:none;}
+  .choice-name{font-size:13px;font-weight:600;margin:0 0 2px;}
+  .choice-meta{font-size:11px;color:var(--ink-soft);margin:0;}
+
+  .doc-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);}
+  .doc-row:last-child{border-bottom:none;}
+  .doc-name{font-size:13px;font-weight:600;margin:0 0 3px;}
+  .doc-name .ti{font-size:14px;margin-right:5px;color:var(--navy);}
+  .doc-sub{font-size:11px;color:var(--ink-soft);margin:0;}
+
+  .upload-box{border:1.5px dashed var(--navy);border-radius:12px;padding:22px 14px;text-align:center;margin-top:6px;}
+  .upload-box i{font-size:26px;color:var(--navy);margin-bottom:6px;display:block;}
+  .upload-box p{font-size:12px;color:var(--ink-soft);margin:0 0 12px;}
+
+  .ai-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--navy);background:#E6EEF4;padding:4px 9px;border-radius:8px;margin-top:8px;}
+
+  .timeline{position:relative;padding-left:20px;}
+  .timeline::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--line);}
+  .tl-item{position:relative;padding-bottom:20px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-dot{position:absolute;left:-20px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--line);border:2px solid var(--paper);}
+  .tl-dot.done{background:var(--green);}
+  .tl-dot.now{background:var(--amber);}
+  .tl-date{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);margin:0 0 2px;}
+  .tl-title{font-size:13px;font-weight:600;margin:0 0 2px;}
+  .tl-body{font-size:11.5px;color:var(--ink-soft);margin:0;line-height:1.4;}
+
+  .countdown{background:var(--navy);color:#fff;border-radius:14px;padding:16px;margin-bottom:14px;}
+  .countdown .label{font-size:11px;color:#B9CBDA;text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px;font-family:'IBM Plex Mono',monospace;}
+  .countdown .time{font-family:'Archivo',sans-serif;font-size:24px;font-weight:700;margin:0 0 12px;}
+  .countdown button{width:100%;background:var(--amber);color:#3A2205;border:none;border-radius:9px;padding:11px;font-weight:700;font-size:13.5px;}
+
+  .avatar-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;}
+  .avatar-row .name{font-size:14px;font-weight:600;margin:0;}
+  .avatar-row .sub{font-size:11px;color:var(--ink-soft);margin:0;font-family:'IBM Plex Mono',monospace;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;}
+  .legend span{font-size:12px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;}
+  .legend i.dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="crest">RJ</div>
+    <span class="eyebrow">Prefeitura do Rio · Secretaria Municipal de Educação</span>
+  </div>
+  <h1 class="title">Fila Certa</h1>
+  <p class="lede">Aplicativo de apoio à Inscrição Creche. A inscrição continua sendo feita no site oficial matricula.rio — o app só acompanha e facilita o que vem depois: contato, documentos e convocação.</p>
+  <span class="callout"><i class="ti ti-link"></i>&nbsp;Vinculado por CPF ao matricula.rio, sem cadastro duplicado</span>
+  <div class="wave"></div>
+
+  <div class="screens">
+
+    <div class="screen-block">
+      <p class="screen-label">1 · Consultar inscrição</p>
+      <p class="screen-sub">Entrada única por CPF — sem criar conta nova, sem repetir dados já informados no site oficial.</p>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="topbar">
+          <p class="app-eyebrow">Fila Certa</p>
+          <p class="app-name">Acompanhar inscrição</p>
+        </div>
+        <div class="content">
+          <div class="card">
+            <h3>Consulte pelo CPF do responsável</h3>
+            <p>Usamos o mesmo CPF da inscrição no matricula.rio para trazer o status atualizado.</p>
+          </div>
+          <p class="field-label">CPF do responsável</p>
+          <input class="input" value="000.000.000-00" style="margin-bottom:14px" readonly>
+          <button class="btn-primary"><i class="ti ti-search"></i>Consultar inscrição</button>
+          <a class="link-quiet">Ainda não se inscreveu? Acesse matricula.rio</a>
+          <div class="card" style="margin-top:22px;background:#F4F2EB;border-style:dashed;">
+            <p style="font-size:11.5px"><i class="ti ti-shield-check" style="color:var(--navy);margin-right:5px"></i>Seus dados vêm direto do sistema da SME. O app não substitui nem duplica a inscrição oficial.</p>
+          </div>
+        </div>
+        <div class="navbar">
+          <div class="navitem active"><i class="ti ti-home"></i>Início</div>
+          <div class="navitem"><i class="ti ti-file-text"></i>Documentos</div>
+          <div class="navitem"><i class="ti ti-bell"></i>Avisos</div>
+          <div class="navitem"><i class="ti ti-user"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-block">
+      <p class="screen-label">2 · Painel da inscrição</p>
+      <p class="screen-sub">As 5 escolhas da família, com selo de viabilidade por distância — puxado do histórico do bairro, não uma opinião do app.</p>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="topbar">
+          <p class="app-eyebrow">Fila Certa</p>
+          <p class="app-name">Olá, Renata</p>
+        </div>
+        <div class="content">
+          <div class="avatar-row">
+            <div class="avatar">MG</div>
+            <div>
+              <p class="name">Miguel · 1 ano e 8 meses</p>
+              <p class="sub">Protocolo 0195-483217</p>
+            </div>
+          </div>
+
+          <div class="alert-card">
+            <div class="row">
+              <i class="ti ti-phone-off"></i>
+              <div>
+                <h4>Atualize seu contato</h4>
+                <p>Seu telefone está desatualizado desde janeiro. Se sua vaga sair, é por aqui que avisamos.</p>
+                <button>Atualizar contato</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Suas 5 escolhas</h3>
+            <div class="choice-row">
+              <div>
+                <p class="choice-name">CM Ladeira dos Funcionários</p>
+                <p class="choice-meta">Caju · 1,2 km de casa</p>
+              </div>
+              <span class="pill pill-wait">Lista de espera</span>
+            </div>
+            <div class="choice-row">
+              <div>
+                <p class="choice-name">EDI Vila Kennedy</p>
+                <p class="choice-meta">Vila Kennedy · 9,8 km de casa</p>
+              </div>
+              <span class="pill pill-cancel">Risco de distância</span>
+            </div>
+            <div class="choice-row">
+              <div>
+                <p class="choice-name">CM Bento Ribeiro</p>
+                <p class="choice-meta">Bento Ribeiro · 2,1 km de casa</p>
+              </div>
+              <span class="pill pill-confirm">Alta viabilidade</span>
+            </div>
+          </div>
+          <a class="link-quiet" style="margin-top:-6px;margin-bottom:14px">Entenda como sua pontuação foi calculada</a>
+
+          <div class="legend">
+            <span><i class="dot" style="background:var(--green)"></i>Alta viabilidade</span>
+            <span><i class="dot" style="background:var(--amber)"></i>Em fila</span>
+            <span><i class="dot" style="background:var(--red)"></i>Distância alta</span>
+          </div>
+
+          <div class="card" style="border-color:#BFDACB;background:#F3FAF6;margin-top:14px">
+            <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:10px">
+              <i class="ti ti-map-pin-check" style="color:var(--green-ink);font-size:18px;margin-top:1px"></i>
+              <div>
+                <h3 style="color:var(--green-ink)">Creche perto de você com vaga aberta</h3>
+                <p>Não era uma das suas 5 escolhas, mas fica mais perto e tem vaga agora.</p>
+              </div>
+            </div>
+            <div class="choice-row" style="border-bottom:1px solid #CFE7D8">
+              <div>
+                <p class="choice-name">CP Creche Cantinho Feliz</p>
+                <p class="choice-meta">Santa Teresa · 650 m de casa · 1 vaga (Maternal II)</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn-primary" style="background:var(--green)">Tenho interesse</button>
+              <button class="btn-secondary" style="border-color:var(--green);color:var(--green-ink);flex:0 0 auto;width:auto;padding:11px 14px">Agora não</button>
+            </div>
+          </div>
+        </div>
+        <div class="navbar">
+          <div class="navitem active"><i class="ti ti-home"></i>Início</div>
+          <div class="navitem"><i class="ti ti-file-text"></i>Documentos</div>
+          <div class="navitem"><i class="ti ti-bell"></i>Avisos</div>
+          <div class="navitem"><i class="ti ti-user"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-block">
+      <p class="screen-label">3 · Documentos</p>
+      <p class="screen-sub">Envio pelo celular em vez de ida presencial. A IA faz a pré-checagem; a unidade confirma no sistema, como já é hoje.</p>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="topbar">
+          <p class="app-eyebrow">Fila Certa</p>
+          <p class="app-name">Documentos</p>
+        </div>
+        <div class="content">
+          <div class="card">
+            <div class="doc-row">
+              <div>
+                <p class="doc-name"><i class="ti ti-file-check"></i>Cadastro Único</p>
+                <p class="doc-sub">Verificado automaticamente via Data Lake</p>
+              </div>
+              <span class="pill pill-ok">Confirmado</span>
+            </div>
+            <div class="doc-row">
+              <div>
+                <p class="doc-name"><i class="ti ti-file-text"></i>Comprovante de residência</p>
+                <p class="doc-sub">Enviado em 12/03 · em análise pela unidade</p>
+              </div>
+              <span class="pill pill-wait">Em análise</span>
+            </div>
+            <div class="doc-row">
+              <div>
+                <p class="doc-name"><i class="ti ti-file-alert"></i>Laudo médico</p>
+                <p class="doc-sub">Necessário para pontuação de deficiência</p>
+              </div>
+              <span class="pill pill-pending">Pendente</span>
+            </div>
+          </div>
+
+          <p class="field-label">Enviar laudo médico</p>
+          <div class="upload-box">
+            <i class="ti ti-camera"></i>
+            <p>Tire uma foto ou envie um arquivo do celular</p>
+            <button class="btn-secondary" style="width:auto;padding:9px 16px;margin:0 auto"><i class="ti ti-upload"></i>Escolher arquivo</button>
+          </div>
+          <div class="ai-tag"><i class="ti ti-sparkles"></i>Pré-checagem automática em minutos</div>
+        </div>
+        <div class="navbar">
+          <div class="navitem"><i class="ti ti-home"></i>Início</div>
+          <div class="navitem active"><i class="ti ti-file-text"></i>Documentos</div>
+          <div class="navitem"><i class="ti ti-bell"></i>Avisos</div>
+          <div class="navitem"><i class="ti ti-user"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-block">
+      <p class="screen-label">4 · Convocação</p>
+      <p class="screen-sub">Prazo visível e confirmação com um toque — ataca direto a perda de vaga por contato desatualizado.</p>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="topbar">
+          <p class="app-eyebrow">Fila Certa</p>
+          <p class="app-name">Avisos</p>
+        </div>
+        <div class="content">
+          <div class="countdown">
+            <p class="label">Prazo para confirmar a vaga</p>
+            <p class="time">2 dias e 14h restantes</p>
+            <button>Confirmar vaga agora</button>
+          </div>
+
+          <div class="card">
+            <h3>Linha do tempo</h3>
+            <div class="timeline">
+              <div class="tl-item">
+                <span class="tl-dot done"></span>
+                <p class="tl-date">05 mar</p>
+                <p class="tl-title">Inscrição registrada</p>
+                <p class="tl-body">Recebida do matricula.rio, 5 opções confirmadas.</p>
+              </div>
+              <div class="tl-item">
+                <span class="tl-dot done"></span>
+                <p class="tl-date">10 mar</p>
+                <p class="tl-title">Cadastro Único confirmado</p>
+                <p class="tl-body">Validado automaticamente, pontuação aplicada.</p>
+              </div>
+              <div class="tl-item">
+                <span class="tl-dot now"></span>
+                <p class="tl-date">22 mar</p>
+                <p class="tl-title">Convocado para CM Bento Ribeiro</p>
+                <p class="tl-body">Responda pelo app para garantir a vaga.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="navbar">
+          <div class="navitem"><i class="ti ti-home"></i>Início</div>
+          <div class="navitem"><i class="ti ti-file-text"></i>Documentos</div>
+          <div class="navitem active"><i class="ti ti-bell"></i>Avisos</div>
+          <div class="navitem"><i class="ti ti-user"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-block">
+      <p class="screen-label">5 · Sugestões perto de você</p>
+      <p class="screen-sub">Lista completa de unidades fora das 5 escolhas, ordenadas por distância — dado firme nas parceiras (Meta x matriculados), estimativa sinalizada nas diretas.</p>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="topbar">
+          <p class="app-eyebrow">Fila Certa</p>
+          <p class="app-name">Vagas perto de você</p>
+        </div>
+        <div class="content">
+          <div class="card" style="border-color:#BFDACB;background:#F3FAF6;">
+            <div class="choice-row" style="border-bottom:1px solid #CFE7D8">
+              <div>
+                <p class="choice-name">CP Creche Cantinho Feliz</p>
+                <p class="choice-meta">Santa Teresa · 650 m · Maternal II</p>
+              </div>
+              <span class="pill pill-ok">1 vaga</span>
+            </div>
+            <p style="font-size:10.5px;color:var(--green-ink);margin:0">Rede parceira · vaga confirmada pela meta contratada</p>
+          </div>
+
+          <div class="card" style="border-color:#BFDACB;background:#F3FAF6;">
+            <div class="choice-row" style="border-bottom:1px solid #CFE7D8">
+              <div>
+                <p class="choice-name">CM Ministro Gustavo Capanema</p>
+                <p class="choice-meta">Rio Comprido · 1,4 km · Berçário</p>
+              </div>
+              <span class="pill pill-wait">Provável vaga</span>
+            </div>
+            <p style="font-size:10.5px;color:var(--amber-ink);margin:0">Rede direta · estimativa por baixa procura na região, não é capacidade oficial</p>
+          </div>
+
+          <div class="card">
+            <div class="choice-row">
+              <div>
+                <p class="choice-name">CP Casa Maternal Coração de Mãe</p>
+                <p class="choice-meta">Rio Comprido · 2,0 km · Maternal I</p>
+              </div>
+              <span class="pill pill-cancel">Lotada</span>
+            </div>
+          </div>
+
+          <button class="btn-secondary" style="margin-top:4px"><i class="ti ti-adjustments"></i>Ajustar raio de busca</button>
+        </div>
+        <div class="navbar">
+          <div class="navitem"><i class="ti ti-home"></i>Início</div>
+          <div class="navitem active"><i class="ti ti-map-pin"></i>Perto de mim</div>
+          <div class="navitem"><i class="ti ti-bell"></i>Avisos</div>
+          <div class="navitem"><i class="ti ti-user"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen-block">
+      <p class="screen-label">6 · Entenda sua pontuação</p>
+      <p class="screen-sub">Não basta mostrar o número — a tela responde se ele é alto, comparado a quê, e por que cada critério existe.</p>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="topbar">
+          <p class="app-eyebrow">Fila Certa</p>
+          <p class="app-name">Sua pontuação em 2025</p>
+        </div>
+        <div class="content">
+          <div class="card">
+            <h3 style="font-size:26px;font-family:'Archivo',sans-serif">76 pontos</h3>
+            <p style="margin-bottom:12px">Régua do processo 195 (2025) — os critérios e pesos mudam a cada ano.</p>
+            <div style="position:relative;height:8px;background:#E7E2D3;border-radius:5px;margin:18px 0 6px">
+              <div style="position:absolute;left:0;top:0;height:8px;width:76%;background:var(--green);border-radius:5px"></div>
+              <div style="position:absolute;left:60%;top:-5px;width:2px;height:18px;background:var(--navy)"></div>
+              <div style="position:absolute;left:76%;top:-16px;transform:translateX(-50%);font-size:10px;font-weight:600;color:var(--green-ink)">você</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-soft)">
+              <span>0</span>
+              <span>60 · mínimo confirmado na CM Bento Ribeiro</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <div class="card" style="background:var(--green-fill);border-color:#BFDACB">
+            <p style="font-size:12.5px;color:var(--green-ink)"><i class="ti ti-check" style="margin-right:5px"></i>Sua pontuação está acima do mínimo confirmado nessa unidade em 2025. Isso pesa a seu favor, mas a posição final também depende de quantas vagas abrirem.</p>
+          </div>
+
+          <div class="card">
+            <h3>Por que esses critérios existem</h3>
+            <p>A lei municipal manda priorizar quem tem mais vulnerabilidade social, pra reduzir desigualdade no acesso à creche. Por isso a pontuação soma assim:</p>
+          </div>
+
+          <div class="card">
+            <div class="doc-row">
+              <div>
+                <p class="doc-name">Cadastro Único</p>
+                <p class="doc-sub">Maior peso em 2025 · famílias de baixa renda cadastradas</p>
+              </div>
+              <span class="pill pill-ok">+51</span>
+            </div>
+            <div class="doc-row">
+              <div>
+                <p class="doc-name">Educação especial</p>
+                <p class="doc-sub">Criança com deficiência ou laudo · acesso garantido por lei</p>
+              </div>
+              <span class="pill pill-ok">+25</span>
+            </div>
+            <div class="doc-row">
+              <div>
+                <p class="doc-name">Bolsa Família</p>
+                <p class="doc-sub">Não informado nesta inscrição</p>
+              </div>
+              <span class="pill pill-pending">+0</span>
+            </div>
+          </div>
+
+          <div class="card" style="background:#F4F2EB;border-style:dashed">
+            <p style="font-size:11.5px"><i class="ti ti-history" style="color:var(--navy);margin-right:5px"></i>Em 2024, Educação especial valia 25 pontos; até 2023 valia 100. A SME revisa os pesos a cada processo, por isso a posição pode mudar de um ano pro outro mesmo sem nada mudar na sua família.</p>
+          </div>
+        </div>
+        <div class="navbar">
+          <div class="navitem"><i class="ti ti-home"></i>Início</div>
+          <div class="navitem"><i class="ti ti-file-text"></i>Documentos</div>
+          <div class="navitem"><i class="ti ti-bell"></i>Avisos</div>
+          <div class="navitem active"><i class="ti ti-user"></i>Perfil</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
