@@ -35,12 +35,16 @@ aberta e independência de contas pessoais requisitos de projeto, não capricho.
 
 ```
 ├── CLAUDE.md                         # contexto operacional (também lido pelo Claude Code)
+├── app/                              # ⭐ o PWA Fila Certa (ver app/README.md)
+│   ├── backend/                      #   FastAPI — domain, services, adapters, repositories
+│   └── frontend/                     #   Vite + JS vanilla, service worker, as 6 telas
 ├── dadoscreche/                      # git clone https://github.com/CIT-SME-RJ/dadoscreche (não versionado)
 ├── docs/
 │   ├── desafio-inscricao-creche.md   # ⭐ o briefing organizado — comece aqui
 │   ├── spec-app-fila-certa.md        # especificação do app
 │   ├── mockup_fila_certa_v1.html     # mockup das 6 telas
 │   ├── Briefing_SME.docx.md          # briefing oficial da SME
+│   ├── handoff_hackathon_sme.md      # handoff do outro dev (sessão de planejamento)
 │   ├── trancricao-gab.md             # transcrição bruta do briefing
 │   ├── luma-event-post.md            # post e comunicados originais do evento
 │   └── mapa-sites-prefeitura.md      # sites, endpoints, datasets e números consolidados
@@ -274,17 +278,51 @@ ociosidade e fila que a SME descreveu — e está visível no dado.
 - **A base não vem filtrada por situação.** 39% é `Cancelado pelo sistema`. Decida o recorte antes
   de contar qualquer coisa.
 
-### 8. O que ainda não explorei
+### 8. Capacidade oficial: só a rede parceira declara vagas
 
-- **`NascidosvivosRJ.xlsx`** (169 bairros, 2016–2026) é a demanda potencial — a peça que falta para
-  o Eixo 1. O cruzamento com inscrições é promissor, mas esbarra na sujeira do campo `bairro`;
-  fazer via CEP → bairro oficial é o caminho.
+`OferecimentosEvagas/Parceiras2025.xlsx`, aba `MAIO -2025`, traz por unidade e por grupamento
+(Berçário I/II, Maternal I/II) as colunas `Meta`, `Aluno`, `Incluído` e `Vagas` — **capacidade
+contratada**, não estimativa:
+
+| | Maio/2025 |
+| --- | ---: |
+| Unidades parceiras | 347 |
+| Meta total | 44.773 |
+| Alunos matriculados | 42.108 |
+| **Vagas abertas declaradas** | **2.723** |
+| Unidades com pelo menos 1 vaga | **163** (47%) |
+
+**2.723 vagas abertas convivendo com fila de espera** — a ociosidade que a SME descreveu, medida em
+dado oficial. É o número mais forte para justificar a tela "Perto de você" do app.
+
+⚠️ **`totalalunoscreche20XX.xlsx` (rede direta) não tem meta nem capacidade** — só matrícula atual.
+Não dá para calcular vaga aberta ali. Toda sugestão de vaga na rede direta é **heurística e precisa
+ser rotulada como tal na interface** — que é exatamente o que o mockup faz. Como a rede direta é a
+maior parte das 872 unidades com inscrição, essa limitação vale para quase toda a rede.
+
+Os relatórios de parceiras são mensais, com **defasagem de ~1 mês** entre coleta e envio.
+
+### 9. O que ainda não explorei
+
+- **`NascidosvivosRJ.xlsx`** — 169 bairros, **2016–2026** (não "desde 2006"). É a demanda potencial
+  e a peça que falta para o Eixo 1. O cruzamento com inscrições esbarra na sujeira do campo
+  `bairro`; via CEP → bairro oficial é o caminho.
 - **Microáreas do IPP** (shapefile) + `Unidades_Unificadas_com_Localizacao.xlsx` (CRE + microárea +
-  lat/lon das 1.942 unidades) permitem a análise territorial na granularidade que a SME de fato usa.
-- **`OferecimentosEvagas/`** tem vagas ofertadas por grupamento — necessário para medir ociosidade
-  de verdade, em vez de inferi-la por confirmações.
+  lat/lon das 1.942 unidades) permitem a análise territorial na granularidade que a SME usa.
+  Requer `geopandas` ou `pyshp` — ainda não testado aqui.
 - **Trajetória entre anos:** 13,3% das crianças reaparecem em mais de um processo, com
   `aluno_anon` estável. Dá para medir quanto tempo uma criança espera até conseguir vaga.
+
+### 10. Para geolocalização, use o arquivo certo
+
+**Não use `04_UnidadesEscolaresComEndereco.csv`** — 258 das 2.188 unidades estão sem endereço.
+Use **`OferecimentosEvagas/Unidades_Unificadas_com_Localizacao.xlsx`**, que traz
+`DESIGNACAO, CRE, microárea, DENOMINACAO, RUA, BAIRRO, LATITUDE, LONGITUDE, Tipo` para 1.942
+unidades.
+
+**Sobre "distância":** a anonimização suprimiu o endereço exato da família. O melhor alcançável é
+**CEP do responsável → unidade**; se cair para bairro, vira centróide de bairro, não porta a porta.
+Rotule como aproximação na interface.
 
 ### Como reproduzir
 
@@ -306,11 +344,31 @@ c.execute("SELECT situacao, COUNT(*) FROM a WHERE ano=2025 GROUP BY 1").fetchall
 📱 **Especificação:** [`docs/spec-app-fila-certa.md`](docs/spec-app-fila-certa.md)
 🎨 **Mockup (6 telas):** [`docs/mockup_fila_certa_v1.html`](docs/mockup_fila_certa_v1.html) — abra no navegador
 
-Aplicativo iOS e Android para o **responsável** (pai/mãe) da criança inscrita na creche.
+**PWA** para o **responsável** (pai/mãe) da criança inscrita na creche — roda em iOS e Android
+sem passar por loja de aplicativos.
 
 > **O app não reimplementa a inscrição** — ela continua no `matricula.rio`. O Fila Certa cobre a
 > lacuna entre _inscrever-se_ e _ocupar a vaga_, que é exatamente onde o processo perde crianças.
 > Entrada por **CPF do responsável**, sem cadastro novo.
+
+> ✅ **Arquitetura decidida: PWA + notificação em cascata.**
+
+```
+Vaga aberta → 1. PUSH (quem instalou; não depende do telefone estar atualizado)
+            → 2. WHATSAPP (todo mundo com número)
+            → 3. SMS (aparelho sem internet)
+            → 4. E-MAIL (registro formal)
+                 ↓
+            REGISTRO: canal · horário · entrega · houve resposta?
+```
+
+Escalonada, não simultânea — para de escalar assim que a família responde, respeitando a regra
+oficial de 1 tentativa/dia por 3 dias em horários diferentes.
+
+**O registro é o coração da proposta, porque hoje não existe.** Ninguém sabe se a escola ligou, se a
+mensagem chegou, nem quando a opção virou "Selecionado" — e não há como provar que o protocolo dos
+3 dias foi cumprido, o que importa porque a fila é auditada por órgãos reguladores. Com o registro,
+a SME passa a distinguir **falha de contato** de **recusa real**, que exigem políticas opostas.
 
 ### As 6 telas
 
@@ -336,36 +394,79 @@ os 3 dias de convocação. Hoje só existe o silêncio — e cada silêncio cust
 - **A pontuação é explicada, não só exibida.** A tela 6 compara com o mínimo confirmado na unidade e
   registra que os pesos mudam a cada ano — coerente com a régua real extraída da `03_QueryC`.
 
-### ⚠️ Já existe o app oficial `Rioeduca em Casa`
+### ⚠️ O app da SME não existe mais nas lojas
 
-O briefing da SME diz que a inscrição pode ser feita _"pelo portal matricula.rio ou pelo app
-Rioeduca em Casa"_. Ele está nas duas lojas ([Android](https://play.google.com/store/apps/details?id=tv.ip.rioeduca)
-· [iOS](https://apps.apple.com/br/app/rioeduca-em-casa/id1554165839)), é gratuito e **não consome o
-plano de dados**.
+O briefing cita inscrição *"pelo portal matricula.rio ou pelo app Rioeduca em Casa"*, e a página da
+SME ainda diz *"Baixe agora mesmo o aplicativo!"*. **Verifiquei em 30/08/2026: os dois links estão
+mortos** — App Store 404 (e `resultCount: 0` na API da Apple), Google Play 404, busca "rioeduca" na
+App Store BR com zero resultados. O app saiu do ar depois do ensino remoto de 2021; a documentação
+da SME não acompanhou.
 
-Isso muda a estratégia: o Fila Certa tem muito mais chance de ser adotado como **módulo dentro do
-Rioeduca em Casa** do que como app novo em loja separada — o que elimina a fricção de instalação e
-responde direto ao critério de maior peso, _"dá para colocar amanhã na prefeitura"_. Use o app
-autônomo como vitrine da demo e o módulo integrado como proposta de adoção.
+**Quem publica app municipal no Rio é a IPLANRIO**, não a SME: `MinhaSaúde.Rio` (ativo, atualizado
+jun/2026), `1746 Rio` (dez/2023), `Zap Carioca` (2016, abandonado).
 
-### Duas lacunas que o app expõe — e que são a proposta
+O que muda:
+
+- ✅ **`MinhaSaúde.Rio` é o precedente que sustenta a proposta** — app municipal por domínio
+  específico, de comunicação com o cidadão, vivo e mantido. É o análogo direto do Fila Certa.
+- ⚠️ **App em loja depende da IPLANRIO e não estreia amanhã**, o que colide com o critério de maior
+  peso. **PWA é a recomendação**: push sem loja, integrado ao `matricula.rio` que a família já
+  acessa pelo celular.
+- 💡 **A morte do Rioeduca em Casa joga a favor do argumento:** app que exige instalação para uma
+  função sazonal é desinstalado; camada web vinculada ao portal existente, não.
+
+### Três lacunas que o app expõe — e que são a proposta
 
 Nem a base nem o sistema atual têm o que o app precisa:
 
 1. **Contato editável do responsável** — não existe campo. É a causa-raiz da perda de vagas.
 2. **Registro de quando a opção mudou de status** — sem isso, nem família nem equipe sabem o prazo
    restante.
+3. **Registro de tentativas de contato** — canal, horário, entrega, resposta. Não existe em lugar
+   nenhum; é o que a cascata cria.
 
 Não escondam na apresentação: **são a proposta**, não falha dos dados. Mockar na demo e declarar
 como requisito de integração.
+
+### As três frentes do time
+
+| Frente | Estado |
+| --- | --- |
+| **App do responsável (Fila Certa)** | ✅ mockup pronto, 6 telas · arquitetura decidida (PWA) |
+| **Painel da prefeitura** | ⬜ conceito aprovado, aguarda mockup |
+| **Mapa territorial** | ⬜ 5 camadas propostas |
+
+O fio condutor das três é um **motor por CPF único da criança** em vez de por opção escolhida — o
+que resolve os três eixos como consequência de uma só mudança de modelo. O painel consome o sinal
+gerado quando uma família toca **"Tenho interesse"** no app: é a ponte direta entre o app e o
+planejamento. Detalhes em [`CLAUDE.md`](CLAUDE.md) §3c e no
+[`handoff`](docs/handoff_hackathon_sme.md).
+
+### Por que PWA, e não app nativo
+
+| | PWA | Nativo |
+| --- | --- | --- |
+| Estreia "amanhã" | ✅ é uma URL | ❌ depende da IPLANRIO publicar |
+| Push Android | ✅ pleno, sem instalar nada | ✅ |
+| Push iOS | ⚠️ exige "Adicionar à Tela de Início" | ✅ |
+| **Demonstrar push hoje** | ✅ FCM grátis | ❌ **iOS exige conta paga de US$ 99** |
+| Toolchain | Node, já instalado | Xcode + Android Studio, **ausentes na máquina** |
+
+O único ganho do nativo seria push mais confiável no iOS — mas WhatsApp/SMS precisa existir em
+qualquer arquitetura, inclusive na nativa. Não compensa toolchain, conta paga e duas bases de código
+para melhorar só o primeiro degrau da cascata, na plataforma minoritária do público-alvo.
+
+⚠️ **Na demo, só o push via FCM/Android roda ao vivo de graça.** WhatsApp e SMS devem ser simulados,
+com a trilha de tentativas visível na tela — mostrar o registro vale mais que enviar a mensagem.
 
 ### Em aberto
 
 - **Autenticação:** o mockup entra só com CPF, o que expõe dados de uma criança a quem souber o CPF
   do responsável. Serve para a demo; a proposta precisa de 2º fator ou gov.br.
-- **Canal:** push nativo não pode ser o único — quem não instala precisa continuar sendo alcançado
-  por WhatsApp/SMS, como manda o protocolo oficial (1 tentativa/dia por 3 dias, em horários
-  diferentes).
+- **Não há CPF real nos dados.** `aluno_anon` e `responsavel_anon` são chaves derivadas — o login
+  por CPF só funciona contra o sistema vivo da SME, não contra esta extração.
+- **Duas telas mencionadas e não desenhadas:** o fluxo de atualização de contato (o botão existe no
+  alerta) e o *fallback* SMS/offline para a notificação de convocação.
 - **O mockup carrega fontes e ícones de CDN.** Embuta os assets antes de publicar ou apresentar — a
   rede do evento é instável.
 

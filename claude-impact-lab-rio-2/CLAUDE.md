@@ -210,10 +210,14 @@ dinâmica real de transição de estados, e a **trajetória da mesma criança en
 > realidade"**. Trate níveis absolutos como ilustrativos; o que se sustenta são **padrões relativos**
 > e a dinâmica do processo. Nunca apresente uma taxa dessas base como estatística oficial da cidade.
 
-## 3b. A solução do time: app **Fila Certa**
+## 3b. A solução do time: **Fila Certa** (PWA)
 
 📱 **Especificação: [`docs/spec-app-fila-certa.md`](docs/spec-app-fila-certa.md)**
 🎨 **Mockup (6 telas): [`docs/mockup_fila_certa_v1.html`](docs/mockup_fila_certa_v1.html)**
+
+> ✅ **Arquitetura decidida: PWA + camada de notificação em cascata.** Push para quem instalou,
+> WhatsApp/SMS para todo mundo, e **registro de qual tentativa alcançou a família** — o que hoje não
+> existe e torna o fluxo não-rastreável. Detalhes em [`spec`](docs/spec-app-fila-certa.md) §4.
 
 App para o **responsável** (pai/mãe) da criança inscrita. Posicionamento decidido, e é o ponto mais
 importante da spec:
@@ -237,37 +241,169 @@ importante da spec:
 consumir os 3 dias, atacando o efeito cascata. Hoje só existe o silêncio, e o silêncio custa 3 dias
 por elo da fila.
 
-### ⚠️ Já existe o app oficial `Rioeduca em Casa`
+### ⚠️ Não existe app da SME nas lojas — verificado em 30/08/2026
 
-O briefing da SME diz que a inscrição pode ser feita *"pelo portal matricula.rio **ou pelo app
-Rioeduca em Casa**"*. Ele está publicado nas duas lojas (Android `tv.ip.rioeduca`; iOS
-`id1554165839`), é gratuito e **não consome o plano de dados**.
+O briefing menciona inscrição *"pelo app Rioeduca em Casa"* e a página da SME ainda o anuncia.
+**Os dois links estão mortos:** App Store 404 e `resultCount: 0` na API da Apple; Google Play 404;
+busca "rioeduca" na App Store BR retorna zero. O app saiu do ar depois do ensino remoto de 2021 e a
+documentação da SME não acompanhou.
 
-**Isso reposiciona a proposta:** o Fila Certa tem muito mais chance de ser adotado como **módulo
-dentro do Rioeduca em Casa** do que como app novo — o que elimina a fricção de instalação, a maior
-objeção contra a hipótese de app, e responde ao critério *"dá para colocar amanhã na prefeitura"*.
-Trate o app autônomo do mockup como **vitrine da demo** e o módulo integrado como **proposta de
-adoção**.
+**Quem publica app municipal é a IPLANRIO**, não a SME — `MinhaSaúde.Rio` (ativo, atualizado
+jun/2026), `1746 Rio` (dez/2023), `Zap Carioca` (2016, abandonado).
+
+**Consequência para a proposta:**
+
+- ❌ Não propor módulo no Rioeduca em Casa — ele não existe.
+- ✅ **`MinhaSaúde.Rio` é o precedente institucional**: app municipal por domínio, de comunicação
+  com o cidadão, vivo e mantido. É o análogo do Fila Certa e o melhor argumento de viabilidade.
+- ⚠️ **App em loja depende da IPLANRIO e não estreia amanhã** — conflito direto com o critério de
+  maior peso (Impacto Real ×8). **PWA é a recomendação**: push sem loja, integrado ao
+  `matricula.rio`, que já é acessado majoritariamente por celular.
+- 💡 A morte do Rioeduca em Casa é **argumento a favor**, não constrangimento: app que exige
+  instalação para função sazonal é desinstalado; camada web vinculada ao portal que a família já
+  usa, não.
 
 ### Lacunas que o app expõe — e que são a proposta
 
-Duas coisas que o app precisa **não existem na base nem no sistema atual**:
+Três coisas que o app precisa **não existem na base nem no sistema atual**:
 
 1. **Contato editável do responsável** — suprimido na anonimização, e no sistema real simplesmente
    não há campo. É a causa-raiz do ponto de quebra nº 4.
 2. **Timestamp de mudança de status** — o briefing confirma que não há registro de quando uma opção
    virou "Selecionada"; nem família nem equipe sabem o prazo restante.
+3. **Registro de tentativas de contato** — canal, horário, status de entrega, houve resposta.
+   Não existe em lugar nenhum; é o que a cascata cria.
 
 Não escondam isso na apresentação: **são a proposta**, não falha da base. Mockar na demo e declarar
 como requisito de integração.
 
-### Pontos ainda em aberto
+### A cascata de notificação — o coração da proposta
+
+```
+Vaga aberta → 1. PUSH (quem instalou o PWA; não depende do telefone estar atualizado)
+            → 2. WHATSAPP (todo mundo com número)
+            → 3. SMS (aparelho sem internet)
+            → 4. E-MAIL (registro formal)
+                 ↓
+            REGISTRO: canal · timestamp · entrega · houve resposta?
+```
+
+Escalonada, não simultânea: para de escalar assim que a família responde, respeitando a regra
+oficial de **1 tentativa/dia por 3 dias em horários diferentes**.
+
+**O registro é o que não existe hoje.** Sem ele ninguém sabe se a escola ligou, se a mensagem foi
+entregue, nem quando a opção virou "Selecionado" — e não há como provar que o protocolo dos 3 dias
+foi cumprido, o que importa porque a fila é auditada por órgãos reguladores. Com ele, a SME passa a
+distinguir **falha de contato** de **recusa real** — duas coisas que exigem políticas opostas.
+
+### Por que PWA (decidido, não em aberto)
+
+1. **Não existe app da SME nas lojas** — nada onde encaixar módulo; app novo põe a IPLANRIO no
+   caminho crítico.
+2. **Push no iOS exige conta paga de developer (US$ 99).** Com Apple ID gratuito a capability não
+   fica disponível — demonstraríamos o app inteiro *exceto* a tela que é a proposta.
+3. **Ambiente local não tem toolchain:** sem Xcode (só Command Line Tools), sem Android SDK, sem
+   Flutter, e **12 GB livres em disco**. Instalar hoje custaria horas do orçamento de 7h30.
+4. **Impacto Real ×8** pergunta *"usaria amanhã?"*. Uma URL, sim; um binário em fila de revisão, não.
+
+O único ganho do nativo seria push mais confiável no iOS — mas WhatsApp/SMS precisa existir em
+qualquer arquitetura, inclusive na nativa. O nativo custaria toolchain, conta paga e duas bases para
+melhorar só o primeiro degrau da cascata, na plataforma minoritária do público-alvo.
+
+### Limites do push por plataforma
+
+| | Android | iOS |
+| --- | --- | --- |
+| Web Push | ✅ sem ressalvas, funciona em aba | ✅ desde 16.4, **só se instalado na tela de início** |
+| Push silencioso | ✅ | ❌ não existe |
+
+No iOS não há prompt automático de instalação, e dentro de *webview* (navegador do WhatsApp) a opção
+some. Alcance estimado 10–15× menor que nativo. Como o parque do público-alvo é majoritariamente
+Android, a maioria tem push pleno sem instalar nada — mas é exatamente por isso que a cascata existe.
+
+⚠️ **Na demo:** só o **FCM/Android** é demonstrável ao vivo de graça. WhatsApp e SMS devem ser
+simulados, com **a trilha de tentativas visível na tela** — mostrar o registro vale mais que enviar
+a mensagem de verdade.
+
+### Ainda em aberto
 
 - **Autenticação.** O mockup entra só com CPF, o que expõe dados de uma criança a quem souber o CPF
   do responsável. Basta para a demo; para a proposta, exige 2º fator ou gov.br.
-- **Canal.** Módulo no Rioeduca em Casa · PWA · app nativo novo. Push nativo não pode ser o único
-  canal — quem não instala precisa continuar sendo alcançado por WhatsApp/SMS.
+- **Provedor de WhatsApp.** A Business API exige *templates* aprovados e número oficial.
 - **Assets do mockup vêm de CDN.** Embuta antes de publicar ou apresentar offline.
+
+## 3c. Estratégia e frentes de trabalho
+
+> Consolidado do [`docs/handoff_hackathon_sme.md`](docs/handoff_hackathon_sme.md), sessão de
+> planejamento do outro desenvolvedor do time.
+
+### Rubrica de avaliação — pesos reais
+
+| Critério | Multiplicador | Pontos de 100 |
+| --- | ---: | ---: |
+| **Impacto Real** | **×8** | **40** |
+| Produto | ×4 | 20 |
+| Engenharia | ×4 | 20 |
+| Ideia | ×2 | 10 |
+| Apresentação | ×2 | 10 |
+
+**Impacto Real sozinho vale 40% da nota.** A pergunta do júri é *"a prefeitura usaria isso amanhã?"*
+— acima de sofisticação técnica ou originalidade. Quando houver conflito entre elegância e
+adotabilidade, escolha adotabilidade.
+
+### O fio condutor: um motor por CPF único
+
+Decisão do time: **não** construir três soluções soltas (uma por eixo), e sim **um motor central de
+dados** que troca o modelo — **classificar e acompanhar por CPF único da criança, não por opção
+escolhida**. Os três eixos caem como consequência:
+
+| Eixo | Como o motor resolve |
+| --- | --- |
+| Classificação | Deduplica as 5 opções em 1 registro por criança |
+| Convocação | Fila de contato única, rastreável, com contato atualizável |
+| Planejamento | Demanda real por território, sem inflar pelas múltiplas opções da mesma criança, cruzada com nascimentos |
+
+**Dado de abertura da apresentação:** **39%** das 837 mil linhas são `Cancelado pelo sistema` —
+mais que o volume de `Confirmado` (23%). É a evidência quantitativa da *fila fantasma* criada pela
+classificação por opção.
+
+### Três frentes
+
+| Frente | Estado | Onde está |
+| --- | --- | --- |
+| **App do responsável (Fila Certa)** | ✅ mockup pronto, 6 telas | §3b + [`spec-app-fila-certa.md`](docs/spec-app-fila-certa.md) |
+| **Painel da prefeitura** | ⬜ não iniciado | conceito aprovado, aguarda mockup |
+| **Mapa territorial** | ⬜ não iniciado | 5 camadas propostas |
+
+**Painel da prefeitura** — fila única por CPF; alerta de vaga ociosa *antes* de virar ociosidade,
+por padrão histórico de tempo de resposta da unidade; score de risco de cancelamento por inscrição
+(distância + histórico do território); comparativo entre as 11 CREs. Deve consumir o sinal gerado
+quando uma família toca **"Tenho interesse"** no app — é a ponte direta entre app e planejamento.
+
+**Mapa territorial** — 5 camadas: (1) demanda real por CPF único geolocalizada; (2) descompasso
+oferta-demanda por unidade/microárea 2021–2025; (3) *"viagem inviável"* — territórios sem opção
+viável perto; (4) camada preditiva com nascidos vivos; (5) linha do tempo 2021→2025.
+
+### Decisões em aberto do time
+
+- [ ] Sugestão de vaga na rede direta (estimativa) aparece com aviso, como no mockup, ou fica só nas parceiras?
+- [ ] Métrica exata do score de viabilidade por distância — raio fixo ou percentil histórico de cancelamento por faixa?
+- [ ] Painel da prefeitura: web funcional ou mockup estático?
+- [ ] Ler o shapefile de microáreas (o outro dev não conseguiu instalar `geopandas` no ambiente dele)
+
+### O que o outro dev ainda não sabe
+
+Levar para ele na próxima sincronização:
+
+1. **O `Rioeduca em Casa` saiu das lojas** (§3b) — App Store e Google Play retornam 404, apesar de
+   o briefing e a página da SME ainda o citarem. Não dá para propor módulo nele. O precedente vivo é
+   o `MinhaSaúde.Rio`, da IPLANRIO, e a recomendação de canal passa a ser **PWA**.
+2. **A rede parceira declara 2.723 vagas abertas** em maio/2025 (§ no [README](README.md)) — dado
+   oficial, não estimativa.
+3. **`NascidosvivosRJ.xlsx` cobre 2016–2026**, não "desde 2006" como consta no handoff.
+4. A análise quantitativa das bases (perda de 11% na convocação, efeito da distância) está no
+   [README](README.md).
+
 
 ## 4. SMDE — Secretaria Municipal de Desenvolvimento Econômico
 
@@ -337,6 +473,10 @@ CREs em GeoJSON para cruzar.
 ```
 .
 ├── CLAUDE.md                        # este arquivo
+├── app/                             # ⭐ o PWA Fila Certa — ver app/README.md
+│   ├── backend/                     #   FastAPI: api/ domain/ services/ adapters/ repositories/
+│   ├── frontend/                    #   Vite + JS vanilla: pages/ components/ lib/ sw.js
+│   └── .env.example
 ├── docs/
 │   ├── desafio-inscricao-creche.md  # ⭐ o briefing organizado — leia primeiro
 │   ├── trancricao-gab.md            # transcrição bruta do briefing

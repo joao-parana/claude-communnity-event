@@ -1,9 +1,21 @@
+# --- pesquisa / coleta ---
 .cache/
-data/
+/data/
+dadoscreche/
+
+# --- python ---
 .venv/
 venv/
 __pycache__/
 *.pyc
+
+# --- app (PWA) ---
+node_modules/
+app/frontend/dist/
+app/frontend/.vite/
+app/data/*
+!app/data/.gitkeep
+
+# --- geral ---
 .env
 .DS_Store
-dadoscreche/
